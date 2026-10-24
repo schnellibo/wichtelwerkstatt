@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wichtel-Einladung</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎄</text></svg>">
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div data-garland></div>
+    <div class="hero-art">
+      <span data-icon="gift-green" data-size="56"></span>
+      <span data-icon="tree" data-size="110"></span>
+      <span data-icon="gift" data-size="62"></span>
+    </div>
+    <p class="subtitle">Du bist eingeladen zum Wichteln!</p>
+    <h1 id="title">…</h1>
+  </header>
+
+  <div id="notfound" class="card hidden"><h2>Hoppla!</h2><p id="notfound-msg"></p></div>
+
+  <div id="app" class="hidden">
+    <section class="card">
+      <div class="tape"></div>
+      <div class="invite-facts" id="facts"></div>
+      <p class="invite-text" id="invite-text"></p>
+      <div id="who" class="center" style="text-align:center"></div>
+    </section>
+
+    <form class="card" id="join">
+      <span class="corner-deko" data-icon="holly" data-size="60"></span>
+      <h2>Ich bin dabei!</h2>
+      <label for="name">Dein Name</label>
+      <input id="name" name="name" required maxlength="80" autocomplete="name">
+      <label for="email">Deine E-Mail-Adresse <small>– hierhin kommt dein Wichtel-Los</small></label>
+      <input id="email" name="email" type="email" required autocomplete="email">
+      <label for="wishlist">Dein Wunschzettel</label>
+      <textarea id="wishlist" name="wishlist" maxlength="3000" placeholder="Was wünschst du dir? Ideen, Lieblingsfarben, No-Gos, Größen …"></textarea>
+      <div class="actions center"><button class="btn big" type="submit">Einladung annehmen 🎁</button></div>
+    </form>
+
+    <section class="card hidden center" id="done" style="text-align:center">
+      <div data-icon="star" data-size="90"></div>
+      <h2 id="done-title">Du bist dabei!</h2>
+      <p>Sobald der Oberwichtel die Ziehung startet, bekommst du eine E-Mail mit dem Namen und dem Wunschzettel deines Wichtelkindes.</p>
+      <p class="muted" style="font-size:16px">Etwas vergessen? Melde dich einfach nochmal mit derselben E-Mail-Adresse an – dann wird dein Wunschzettel aktualisiert.</p>
+      <button class="btn ghost" id="again">Wunschzettel ändern</button>
+    </section>
+
+    <section class="card hidden" id="closed" style="text-align:center">
+      <h2>Die Lose sind schon gezogen</h2>
+      <p>Für diese Aktion ist keine Anmeldung mehr möglich. Frag doch den Oberwichtel – vielleicht gibt's nächstes Jahr wieder eine Runde! 🎄</p>
+    </section>
+  </div>
+</main>
+<script src="/common.js"></script>
+<script>
+  const token = location.pathname.split('/').pop();
+  const $ = (id) => document.getElementById(id);
+
+  function renderWho(names) {
+    $('who').innerHTML = names.length
+      ? `<p class="muted" style="margin-bottom:0">Schon dabei:</p><div class="chips center">${names.map((n) => `<span class="chip">${esc(n)}</span>`).join('')}</div>`
+      : '<p class="muted">Sei die erste Person, die mitmacht!</p>';
+  }
+
+  async function load() {
+    try {
+      const ev = await api(`/api/invite/${token}`);
+      document.title = `Einladung: ${ev.name}`;
+      $('title').textContent = ev.name;
+      $('facts').innerHTML = [
+        ev.maxAmount ? `<div class="fact"><b>${esc(ev.maxAmount)} €</b>max. Geschenkwert</div>` : '',
+        ev.giftDate ? `<div class="fact"><b>${esc(new Date(ev.giftDate + 'T12:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }))}</b>${esc(formatDate(ev.giftDate).split(',')[0])} · Bescherung</div>` : '',
+      ].join('');
+      $('invite-text').textContent = ev.inviteText;
+      renderWho(ev.participants);
+      if (ev.drawn) { $('join').classList.add('hidden'); $('closed').classList.remove('hidden'); }
+      $('app').classList.remove('hidden');
+    } catch (err) {
+      $('notfound-msg').textContent = err.message;
+      $('notfound').classList.remove('hidden');
+    }
+  }
+
+  $('join').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    try {
+      const res = await api(`/api/invite/${token}/join`, { method: 'POST', body: formData(e.target) });
+      $('done-title').textContent = res.updated ? 'Wunschzettel aktualisiert!' : `Juhu, du bist dabei, ${$('name').value.trim()}!`;
+      renderWho(res.participants);
+      $('join').classList.add('hidden');
+      $('done').classList.remove('hidden');
+      confetti();
+      $('done').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      toast(err.message, true);
+    }
+    btn.disabled = false;
+  });
+  $('again').addEventListener('click', () => {
+    $('done').classList.add('hidden');
+    $('join').classList.remove('hidden');
+    $('wishlist').focus();
+  });
+
+  load();
+</script>
+</body>
+</html>

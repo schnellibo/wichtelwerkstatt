@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap');
+
+:root {
+  --tanne: #1e5b3a;
+  --tanne-hell: #2f7a50;
+  --rot: #b3261e;
+  --rot-dunkel: #8e1c16;
+  --gold: #c9a227;
+  --gold-hell: #f1d77a;
+  --papier: #fffaf0;
+  --hintergrund: #f3ead3;
+  --tinte: #2a2420;
+  --tinte-weich: #6b5f55;
+  --wobble: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --wobble-2: 15px 255px 15px 225px / 225px 15px 255px 15px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--tinte);
+  background-color: var(--hintergrund);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.7) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,.6) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 45% 60%, rgba(255,255,255,.5) 0 2.5px, transparent 3.5px),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(30,91,58,.05) 31px 32px);
+  background-size: 140px 140px, 190px 190px, 230px 230px, auto;
+}
+
+/* fallender Schnee */
+.snow { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.snow i {
+  position: absolute; top: -20px; color: #fff; text-shadow: 0 0 2px rgba(0,0,0,.15);
+  animation: fall linear infinite;
+}
+@keyframes fall { to { transform: translateY(110vh) rotate(260deg); } }
+@media (prefers-reduced-motion: reduce) { .snow { display: none; } }
+
+main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+
+h1, h2, h3 { font-family: 'Caveat', cursive; font-weight: 700; line-height: 1.1; margin: 0 0 .4em; }
+h1 { font-size: clamp(42px, 9vw, 64px); color: var(--rot); text-align: center; transform: rotate(-1.5deg); }
+h2 { font-size: 36px; color: var(--tanne); }
+h3 { font-size: 28px; color: var(--rot); }
+
+.subtitle { text-align: center; color: var(--tinte-weich); margin-top: -.4em; font-size: 21px; }
+
+/* Kopfzeile mit Girlande */
+header.hero { text-align: center; padding-top: 8px; }
+.garland { display: block; width: 100%; max-width: 620px; height: 44px; margin: 0 auto 6px; }
+.hero-art { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 6px 0 4px; }
+.hero-art svg { filter: url(#wobble); }
+
+/* Papier-Karten mit krakeligem Rand */
+.card {
+  position: relative;
+  background: var(--papier);
+  border: 2.5px solid var(--tinte);
+  border-radius: var(--wobble);
+  padding: 26px 24px;
+  margin: 28px 0;
+  box-shadow: 4px 5px 0 rgba(42,36,32,.18);
+}
+.card:nth-of-type(odd) { transform: rotate(-.4deg); border-radius: var(--wobble-2); }
+.card:nth-of-type(even) { transform: rotate(.35deg); }
+.card .tape {
+  position: absolute; top: -14px; left: 50%; width: 110px; height: 26px; margin-left: -55px;
+  background: rgba(201,162,39,.45); transform: rotate(-3deg);
+  border-left: 2px dashed rgba(255,255,255,.6); border-right: 2px dashed rgba(255,255,255,.6);
+}
+.card .corner-deko { position: absolute; right: -14px; top: -20px; width: 56px; height: 56px; transform: rotate(12deg); filter: url(#wobble); }
+
+/* Formulare */
+label { display: block; font-size: 20px; margin: 14px 0 4px; color: var(--tanne); }
+label small { color: var(--tinte-weich); font-size: 16px; }
+input, textarea, select {
+  width: 100%; font: inherit; color: var(--tinte);
+  background: #fff;
+  border: 2px solid var(--tinte);
+  border-radius: 12px 4px 14px 5px / 5px 14px 4px 12px;
+  padding: 9px 12px;
+  outline: none;
+  transition: box-shadow .15s;
+}
+textarea { min-height: 110px; resize: vertical; }
+input:focus, textarea:focus, select:focus { box-shadow: 3px 3px 0 var(--gold); }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+@media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+  font-family: 'Caveat', cursive; font-weight: 700; font-size: 26px;
+  color: #fff; background: var(--rot);
+  border: 2.5px solid var(--tinte);
+  border-radius: var(--wobble);
+  padding: 6px 22px 8px;
+  cursor: pointer; text-decoration: none;
+  box-shadow: 3px 4px 0 var(--tinte);
+  transition: transform .1s, box-shadow .1s;
+}
+.btn:hover { transform: translate(-1px,-1px) rotate(-1deg); box-shadow: 4px 5px 0 var(--tinte); }
+.btn:active { transform: translate(2px,3px); box-shadow: 1px 1px 0 var(--tinte); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.btn.green { background: var(--tanne); }
+.btn.gold { background: var(--gold); color: var(--tinte); }
+.btn.ghost { background: var(--papier); color: var(--tinte); font-size: 21px; padding: 2px 14px 4px; box-shadow: 2px 3px 0 var(--tinte); }
+.btn.small { font-size: 19px; padding: 0 10px 2px; box-shadow: 2px 2px 0 var(--tinte); }
+.btn.big { font-size: 40px; padding: 10px 40px 14px; }
+.actions { margin-top: 22px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.center { text-align: center; justify-content: center; }
+
+/* Link-Box */
+.linkbox { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+.linkbox input { flex: 1 1 260px; font-family: ui-monospace, monospace; font-size: 15px; background: #fdf6e0; }
+
+/* Teilnehmer-Liste */
+.wichtel-list { list-style: none; padding: 0; margin: 0; }
+.wichtel-list li {
+  display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: start;
+  padding: 12px 0; border-bottom: 2px dashed rgba(42,36,32,.2);
+}
+.wichtel-list li:last-child { border-bottom: none; }
+.avatar {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  font-family: 'Caveat', cursive; font-size: 26px; font-weight: 700; color: #fff;
+  border: 2px solid var(--tinte); border-radius: 50% 45% 52% 48% / 48% 52% 45% 50%;
+}
+.wichtel-list .meta { color: var(--tinte-weich); font-size: 16px; }
+.wichtel-list .wish { white-space: pre-wrap; font-size: 17px; margin-top: 4px; color: var(--tinte); }
+.wichtel-list details summary { cursor: pointer; color: var(--tanne); font-size: 16px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  background: #fff; border: 2px solid var(--tanne); color: var(--tanne);
+  border-radius: 14px 6px 14px 6px; padding: 1px 12px; font-size: 18px;
+}
+.chip.excl { border-color: var(--rot); color: var(--rot); display: inline-flex; align-items: center; gap: 8px; }
+.chip button { border: none; background: none; color: inherit; cursor: pointer; font: inherit; font-size: 20px; padding: 0; line-height: 1; }
+
+/* Hinweise */
+.note { background: #fdf3cf; border: 2px dashed var(--gold); border-radius: 10px 4px 12px 4px; padding: 10px 14px; margin: 14px 0; font-size: 17px; }
+.note.red { background: #fbe4e1; border-color: var(--rot); }
+.note.green { background: #e3f1e6; border-color: var(--tanne); }
+.muted { color: var(--tinte-weich); }
+
+.badge {
+  display: inline-block; font-size: 18px; padding: 0 12px; border: 2px solid currentColor;
+  border-radius: 12px 4px 12px 4px; transform: rotate(-2deg);
+}
+.badge.open { color: var(--tanne); }
+.badge.done { color: var(--rot); }
+
+/* Einladungs-Karte */
+.invite-facts { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin: 14px 0; }
+.fact {
+  background: #fff; border: 2px solid var(--tinte); padding: 8px 16px; text-align: center;
+  border-radius: 18px 6px 16px 8px; min-width: 150px; box-shadow: 2px 3px 0 var(--gold);
+}
+.fact b { display: block; font-family: 'Caveat', cursive; font-size: 30px; color: var(--rot); line-height: 1; }
+.invite-text { white-space: pre-wrap; font-size: 21px; text-align: center; margin: 12px auto; max-width: 560px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) rotate(-1deg); z-index: 50;
+  background: var(--tanne); color: #fff; border: 2.5px solid var(--tinte); border-radius: var(--wobble);
+  padding: 8px 22px; font-size: 20px; box-shadow: 3px 4px 0 var(--tinte);
+  opacity: 0; pointer-events: none; transition: opacity .25s, bottom .25s;
+}
+.toast.show { opacity: 1; bottom: 36px; }
+.toast.error { background: var(--rot); }
+
+.hidden { display: none !important; }
+
+footer { text-align: center; color: var(--tinte-weich); font-size: 16px; margin-top: 30px; }
+
+/* Konfetti bei der Ziehung */
+.confetti { position: fixed; top: -20px; z-index: 60; font-size: 26px; pointer-events: none; animation: fall 3s ease-in forwards; }
