@@ -1,0 +1,8 @@
+node_modules
+data
+outbox
+.env
+.git
+.github
+Dockerfile
+fly.toml

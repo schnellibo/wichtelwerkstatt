@@ -41,6 +41,35 @@ Für echten Versand setzt du diese Umgebungsvariablen:
 
 Bei Gmail brauchst du ein [App-Passwort](https://myaccount.google.com/apppasswords).
 
+## Hosting auf Fly.io
+
+Die App braucht einen Server, der immer läuft (geplante Ziehungen), und einen dauerhaften Speicher für `wichtel.json`.
+`fly.toml` ist dafür vorbereitet: eine Maschine in Frankfurt, immer an, mit einem Volume unter `/data`.
+
+**Einmalig einrichten** (mit [flyctl](https://fly.io/docs/flyctl/install/)):
+
+```bash
+fly auth signup                      # oder: fly auth login
+fly launch --copy-config --no-deploy --name <dein-app-name>   # Name muss weltweit eindeutig sein
+fly volumes create wichtel_data --region fra --size 1
+fly secrets set BASE_URL=https://<dein-app-name>.fly.dev \
+  SMTP_HOST=smtp.gmail.com SMTP_PORT=587 \
+  SMTP_USER=deine.adresse@gmail.com SMTP_PASS=<app-passwort> \
+  MAIL_FROM="Wichtelwerkstatt <deine.adresse@gmail.com>"
+fly deploy --ha=false
+```
+
+Danach läuft die App unter `https://<dein-app-name>.fly.dev`.
+
+- **Nur eine Maschine!** Daten und Zeitplan liegen in einer Datei, deshalb `--ha=false` und nicht hochskalieren.
+- **SMTP ist auf dem Server Pflicht.** Ohne SMTP landen die Mails in `outbox/` im Container und gehen beim nächsten Deploy verloren.
+- **Eigene Domain:** `fly certs add wichteln.example.de`, DNS laut Anweisung setzen, dann `BASE_URL` anpassen.
+- **Backup:** `fly ssh sftp get /data/wichtel.json`
+
+**Automatisch deployen:** `.github/workflows/fly-deploy.yml` deployt bei jedem Push auf `main`
+(oder manuell unter *Actions → Fly Deploy → Run workflow*). Dafür einmal `fly tokens create deploy` ausführen
+und das Token im GitHub-Repo unter *Settings → Secrets and variables → Actions* als `FLY_API_TOKEN` speichern.
+
 ## Technik
 
 - Node.js + Express, ohne Build-Schritt
@@ -54,3 +83,4 @@ Bei Gmail brauchst du ein [App-Passwort](https://myaccount.google.com/apppasswor
 | `mailer.js` | E-Mail-Vorlagen & Versand |
 | `store.js` | JSON-Speicher |
 | `public/` | Startseite, Oberwichtel-Zentrale, Einladungsseite |
+| `Dockerfile`, `fly.toml` | Hosting auf Fly.io |

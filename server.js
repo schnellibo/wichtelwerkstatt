@@ -7,6 +7,7 @@ const mailer = require('./mailer');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
+app.set('trust proxy', true); // hinter Fly.io-Proxy: echtes https/Host für Links
 app.use(express.json({ limit: '100kb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
