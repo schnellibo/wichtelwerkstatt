@@ -44,31 +44,23 @@ Bei Gmail brauchst du ein [App-Passwort](https://myaccount.google.com/apppasswor
 ## Hosting auf Fly.io
 
 Die App braucht einen Server, der immer läuft (geplante Ziehungen), und einen dauerhaften Speicher für `wichtel.json`.
-`fly.toml` ist dafür vorbereitet: eine Maschine in Frankfurt, immer an, mit einem Volume unter `/data`.
+`fly.toml` ist dafür vorbereitet: eine Maschine in Amsterdam (`ams`), immer an, mit einem Volume unter `/data`.
 
-**Einmalig einrichten** (mit [flyctl](https://fly.io/docs/flyctl/install/)):
+**Einrichten über das Fly-Dashboard** (Fly.io ist mit GitHub verknüpft):
 
-```bash
-fly auth signup                      # oder: fly auth login
-fly launch --copy-config --no-deploy --name <dein-app-name>   # Name muss weltweit eindeutig sein
-fly volumes create wichtel_data --region fra --size 1
-fly secrets set BASE_URL=https://<dein-app-name>.fly.dev \
-  SMTP_HOST=smtp.gmail.com SMTP_PORT=587 \
-  SMTP_USER=deine.adresse@gmail.com SMTP_PASS=<app-passwort> \
-  MAIL_FROM="Wichtelwerkstatt <deine.adresse@gmail.com>"
-fly deploy --ha=false
-```
+1. Im [Fly-Dashboard](https://fly.io/dashboard) eine App aus dem GitHub-Repo starten (Branch `main`).
+   Fly übernimmt die Einstellungen aus `fly.toml` und legt das Volume `wichtel_data` (1 GB) beim ersten Start selbst an.
+2. In der App unter **Secrets** eintragen:
+   `BASE_URL` (z. B. `https://<dein-app-name>.fly.dev`), `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`.
+3. Deployen bzw. neu deployen. Danach läuft die App unter `https://<dein-app-name>.fly.dev`.
 
-Danach läuft die App unter `https://<dein-app-name>.fly.dev`.
+Fly legt beim Launch eventuell einen Branch `flyio-new-files` mit einer eigenen `fly.toml` an. Den nicht mergen:
+maßgeblich ist die `fly.toml` auf `main` (u. a. `internal_port = 3000`, passend zu `PORT`).
 
-- **Nur eine Maschine!** Daten und Zeitplan liegen in einer Datei, deshalb `--ha=false` und nicht hochskalieren.
+- **Nur eine Maschine!** Daten und Zeitplan liegen in einer Datei, deshalb nicht hochskalieren.
 - **SMTP ist auf dem Server Pflicht.** Ohne SMTP landen die Mails in `outbox/` im Container und gehen beim nächsten Deploy verloren.
-- **Eigene Domain:** `fly certs add wichteln.example.de`, DNS laut Anweisung setzen, dann `BASE_URL` anpassen.
-- **Backup:** `fly ssh sftp get /data/wichtel.json`
-
-**Automatisch deployen:** `.github/workflows/fly-deploy.yml` deployt bei jedem Push auf `main`
-(oder manuell unter *Actions → Fly Deploy → Run workflow*). Dafür einmal `fly tokens create deploy` ausführen
-und das Token im GitHub-Repo unter *Settings → Secrets and variables → Actions* als `FLY_API_TOKEN` speichern.
+- **Eigene Domain:** im Dashboard unter *Certificates* hinzufügen, DNS laut Anweisung setzen, dann `BASE_URL` anpassen.
+- **Backup** (mit [flyctl](https://fly.io/docs/flyctl/install/)): `fly ssh sftp get /data/wichtel.json`
 
 ## Technik
 

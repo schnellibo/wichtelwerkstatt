@@ -1,20 +1,24 @@
-# Fly.io-Konfiguration. Den App-Namen bei `fly launch` ggf. anpassen (muss weltweit eindeutig sein).
+# fly.toml app configuration file generated for wichtelwerkstatt on 2026-10-25T13:55:43Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
 app = 'wichtelwerkstatt'
-primary_region = 'fra'
+primary_region = 'ams'
 
 [build]
 
 [env]
-  PORT = '3000'
   DATA_FILE = '/data/wichtel.json'
+  PORT = '3000'
 
-# Persistenter Speicher für data/wichtel.json
-[mounts]
+[[mounts]]
   source = 'wichtel_data'
   destination = '/data'
+  initial_size = '1gb'
 
 [http_service]
-  internal_port = 3000
+  internal_port = 3000  # muss zu PORT passen
   force_https = true
   # Immer an lassen: geplante Ziehungen werden jede Minute geprüft.
   auto_stop_machines = 'off'
@@ -22,9 +26,9 @@ primary_region = 'fra'
   min_machines_running = 1
 
   [[http_service.checks]]
-    grace_period = '10s'
     interval = '30s'
     timeout = '5s'
+    grace_period = '10s'
     method = 'GET'
     path = '/'
 
