@@ -44,14 +44,14 @@ Bei Gmail brauchst du ein [App-Passwort](https://myaccount.google.com/apppasswor
 ## Hosting auf Fly.io
 
 Die App braucht einen Server, der immer läuft (geplante Ziehungen), und einen dauerhaften Speicher für `wichtel.json`.
-`fly.toml` ist dafür vorbereitet: eine Maschine in Frankfurt, immer an, mit einem Volume unter `/data`.
+`fly.toml` ist dafür vorbereitet: eine Maschine in Amsterdam (`ams`), immer an, mit einem Volume unter `/data`.
 
 **Einmalig einrichten** (mit [flyctl](https://fly.io/docs/flyctl/install/)):
 
 ```bash
 fly auth signup                      # oder: fly auth login
 fly launch --copy-config --no-deploy --name <dein-app-name>   # Name muss weltweit eindeutig sein
-fly volumes create wichtel_data --region fra --size 1
+fly volumes create wichtel_data --region ams --size 1
 fly secrets set BASE_URL=https://<dein-app-name>.fly.dev \
   SMTP_HOST=smtp.gmail.com SMTP_PORT=587 \
   SMTP_USER=deine.adresse@gmail.com SMTP_PASS=<app-passwort> \
