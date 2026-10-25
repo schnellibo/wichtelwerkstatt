@@ -10,19 +10,13 @@
 <body>
 <main>
   <header class="hero">
-    <div data-garland></div>
-    <div class="hero-art">
-      <span data-icon="gift" data-size="64"></span>
-      <span data-icon="tree" data-size="120"></span>
-      <span data-icon="gift-green" data-size="54"></span>
-    </div>
-    <h1>Wichtelwerkstatt</h1>
-    <p class="subtitle">Wichteln mit Freunden &amp; Familie – ganz ohne Zettel im Hut.</p>
+    <svg class="hero-bow" aria-hidden="true"><use href="#schleife"/></svg>
+    <h1><span class="caps">Willkommen<br>in der</span><span class="script">Wichtelwerkstatt</span></h1>
+    <p class="tagline">Wichteln mit Familie &amp; Freunden</p>
   </header>
 
-  <form class="card" id="create">
-    <div class="tape"></div>
-    <span class="corner-deko" data-icon="star" data-size="56"></span>
+  <form class="card has-ribbon" id="create">
+    <svg class="ribbon" aria-hidden="true"><use href="#schleife"/></svg>
     <h2>Neue Wichtelaktion</h2>
 
     <label for="name">Name der Aktion</label>
@@ -47,21 +41,21 @@ Dieses Jahr wichteln wir wieder! Trag dich mit deinem Namen, deiner E-Mail-Adres
     <input id="organizerEmail" name="organizerEmail" type="email" placeholder="oberwichtel@beispiel.de">
 
     <div class="actions center">
-      <button class="btn big" type="submit">Aktion erstellen ✨</button>
+      <button class="btn big" type="submit">Aktion erstellen</button>
     </div>
   </form>
 
   <section class="card">
-    <h3>So funktioniert's</h3>
-    <ol>
-      <li>Du legst die Aktion an und wirst zum <b>Oberwichtel</b>.</li>
-      <li>Du schickst den Einladungslink an Freunde &amp; Familie.</li>
-      <li>Alle tragen Namen, E-Mail und Wunschzettel ein.</li>
-      <li>Mit einem Klick startest du die Ziehung – jede:r bekommt per Mail ein Los.</li>
+    <h2>So funktioniert's</h2>
+    <ol class="steps">
+      <li><span>Du legst die Aktion an und wirst zum <b>Oberwichtel</b>.</span></li>
+      <li><span>Du schickst den Einladungslink an Freunde &amp; Familie.</span></li>
+      <li><span>Alle tragen Namen, E-Mail und Wunschzettel ein.</span></li>
+      <li><span>Mit einem Klick startest du die Ziehung – jede:r bekommt per Mail ein Los.</span></li>
     </ol>
   </section>
 
-  <footer>Mit ❤️ und viel Glühwein gebastelt</footer>
+  <footer>Vibe-coded by Nelli <span class="heart">♥</span></footer>
 </main>
 <script src="/common.js"></script>
 <script>
