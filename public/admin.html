@@ -10,17 +10,15 @@
 <body>
 <main>
   <header class="hero">
-    <div data-garland></div>
-    <div class="hero-art"><span data-icon="star" data-size="70"></span></div>
-    <h1 id="title">Oberwichtel-Zentrale</h1>
-    <p class="subtitle"><span id="status" class="badge open">Anmeldung offen</span></p>
+    <svg class="hero-bow" aria-hidden="true"><use href="#schleife"/></svg>
+    <h1><span class="caps">Oberwichtel-<br>Zentrale</span><span class="script" id="title">…</span></h1>
+    <p class="tagline"><span id="status" class="badge open">Anmeldung offen</span></p>
   </header>
 
   <div id="notfound" class="card hidden"><h2>Hoppla!</h2><p>Diese Wichtelaktion gibt es nicht. Prüfe deinen Oberwichtel-Link.</p></div>
 
   <div id="app" class="hidden">
     <section class="card" id="welcome-card">
-      <div class="tape"></div>
       <h2>Deine Links</h2>
       <div id="new-note" class="note green hidden">
         🎉 Deine Aktion ist angelegt! <b>Speichere dir diese Seite als Lesezeichen</b> – nur mit diesem Link kannst du die Aktion verwalten.
@@ -43,7 +41,6 @@
     </section>
 
     <form class="card" id="details">
-      <span class="corner-deko" data-icon="holly" data-size="60"></span>
       <h2>Die Aktion</h2>
       <label for="name">Name der Aktion</label>
       <input id="name" name="name" required maxlength="120">
@@ -69,7 +66,6 @@
     </section>
 
     <section class="card" id="exclusions-card">
-      <span class="corner-deko" data-icon="candy" data-size="60"></span>
       <h2>Wer darf sich nicht ziehen?</h2>
       <p class="muted">Z. B. Paare oder Geschwister. Die beiden ziehen sich dann gegenseitig nicht. (Sich selbst zieht ohnehin niemand.)</p>
       <form id="excl-form" class="row">
@@ -80,9 +76,9 @@
       <div class="chips" id="exclusions"></div>
     </section>
 
-    <section class="card" id="draw-card">
-      <div class="tape"></div>
-      <h2>Die große Ziehung</h2>
+    <section class="card has-ribbon" id="draw-card">
+      <svg class="ribbon" aria-hidden="true"><use href="#schleife"/></svg>
+      <h2>Die große <span class="script-accent">Ziehung</span></h2>
 
       <div id="draw-open">
         <p>Wenn alle dabei sind, startest du die Ziehung. Jede:r bekommt dann per E-Mail den Namen und den Wunschzettel der Person, die sie oder er beschenken darf.</p>
@@ -90,11 +86,11 @@
         <div id="draw-error" class="note red hidden"></div>
 
         <div class="actions center">
-          <button class="btn big" id="draw-btn">🎲 Jetzt ziehen!</button>
+          <button class="btn big" id="draw-btn">Jetzt ziehen</button>
         </div>
 
         <details style="margin-top:22px">
-          <summary style="cursor:pointer;color:var(--tanne)">…oder automatisch zu einem bestimmten Zeitpunkt ziehen</summary>
+          <summary style="cursor:pointer;color:var(--rot)">…oder automatisch zu einem bestimmten Zeitpunkt ziehen</summary>
           <form id="schedule" class="row" style="align-items:end">
             <div><label for="drawAt">Ziehung am</label><input id="drawAt" name="drawAt" type="datetime-local"></div>
             <div class="actions">
@@ -107,7 +103,6 @@
       </div>
 
       <div id="draw-done" class="hidden center" style="text-align:center">
-        <div data-icon="gift" data-size="90"></div>
         <h3>Die Lose sind gezogen!</h3>
         <p id="drawn-at" class="muted"></p>
         <p id="mail-status"></p>
@@ -116,7 +111,7 @@
       </div>
     </section>
   </div>
-  <footer>Wichtelwerkstatt · <a href="/">neue Aktion anlegen</a></footer>
+  <footer><a href="/">Neue Aktion anlegen</a> · Vibe-coded by Nelli <span class="heart">♥</span></footer>
 </main>
 <script src="/common.js"></script>
 <script>
@@ -233,7 +228,7 @@
   $('draw-btn').addEventListener('click', async () => {
     if (!confirm(`Jetzt die Lose für ${ev.participants.length} Wichtel ziehen und per E-Mail verschicken?\n\nDanach kann sich niemand mehr anmelden.`)) return;
     $('draw-btn').disabled = true;
-    $('draw-btn').textContent = '🎲 Wird gezogen…';
+    $('draw-btn').textContent = 'Wird gezogen…';
     try {
       render(await api(`${base}/draw`, { method: 'POST' }));
       confetti();
@@ -242,7 +237,7 @@
       toast(err.message, true);
       $('draw-btn').disabled = false;
     }
-    $('draw-btn').textContent = '🎲 Jetzt ziehen!';
+    $('draw-btn').textContent = 'Jetzt ziehen';
   });
   $('resend-btn').addEventListener('click', () => act(api(`${base}/resend`, { method: 'POST' }), 'Erneut versucht'));
   document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {

@@ -66,7 +66,7 @@ maßgeblich ist die `fly.toml` auf `main` (u. a. `internal_port = 3000`, passend
 
 - Node.js + Express, ohne Build-Schritt
 - Daten liegen in `data/wichtel.json` (Pfad über `DATA_FILE` änderbar)
-- Frontend: reines HTML/CSS/JS, handgezeichnete SVG-Grafiken, Schriften *Caveat* & *Patrick Hand*
+- Frontend: reines HTML/CSS/JS, Streifen-Design mit gezeichneter SVG-Schleife, Schriften *Cormorant Garamond*, *Pinyon Script* & *Jost*
 
 | Datei | Inhalt |
 |---|---|

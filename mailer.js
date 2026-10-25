@@ -20,13 +20,16 @@ const esc = (s = '') =>
 const nl2br = (s) => esc(s).replace(/\n/g, '<br>');
 
 function layout(title, body) {
-  return `<!doctype html><html><body style="margin:0;background:#f6efdc;font-family:Georgia,serif;color:#2a2420">
-  <div style="max-width:560px;margin:24px auto;background:#fffaf0;border:2px solid #2a2420;border-radius:18px 6px 22px 8px;padding:28px">
-    <div style="font-size:30px;text-align:center">🎄 ⭐ 🎁</div>
-    <h1 style="color:#b3261e;text-align:center;font-size:26px;margin:8px 0 18px">${esc(title)}</h1>
+  return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#3b4130;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#2f3326">
+  <div style="max-width:560px;margin:0 auto;background:#faf7f0;border-radius:18px;padding:30px 28px">
+    <div style="font-size:34px;text-align:center">🎀</div>
+    <p style="text-align:center;font-family:Georgia,serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#535a45;margin:6px 0 0">Wichtelwerkstatt</p>
+    <h1 style="color:#a3312c;text-align:center;font-family:Georgia,serif;font-style:italic;font-weight:normal;font-size:30px;margin:6px 0 20px">${esc(title)}</h1>
     ${body}
-    <p style="text-align:center;color:#1e5b3a;margin-top:28px">Frohes Wichteln! ❄️</p>
-  </div></body></html>`;
+    <p style="text-align:center;color:#3b4130;margin-top:28px">Frohes Wichteln! ❄️</p>
+  </div>
+  <p style="text-align:center;color:#f4efe4;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:18px 0 0">Vibe-coded by Nelli <span style="color:#e58a80">♥</span></p>
+</body></html>`;
 }
 
 async function send({ to, subject, html }) {
@@ -48,19 +51,19 @@ function sendAssignment(event, giver, receiver) {
   const html = layout(event.name, `
     <p>Hallo ${esc(giver.name)},</p>
     <p>die Wichtel-Ziehung hat stattgefunden! Du darfst beschenken:</p>
-    <div style="text-align:center;font-size:28px;font-weight:bold;color:#1e5b3a;border:2px dashed #c9a227;border-radius:12px;padding:14px;margin:16px 0">${esc(receiver.name)}</div>
+    <div style="text-align:center;font-family:Georgia,serif;font-size:30px;color:#a3312c;background:#fffdf8;border:1px solid #ddd5c4;border-radius:12px;padding:14px;margin:16px 0">${esc(receiver.name)}</div>
     <p><b>Wunschzettel von ${esc(receiver.name)}:</b></p>
-    <div style="background:#f6efdc;border-left:4px solid #b3261e;padding:12px 16px;border-radius:4px">${receiver.wishlist ? nl2br(receiver.wishlist) : '<i>Kein Wunschzettel – lass dich überraschen!</i>'}</div>
+    <div style="background:#f4efe4;border-left:3px solid #a3312c;padding:12px 16px;border-radius:6px">${receiver.wishlist ? nl2br(receiver.wishlist) : '<i>Kein Wunschzettel – lass dich überraschen!</i>'}</div>
     ${details ? `<ul>${details}</ul>` : ''}
-    <p style="font-size:14px;color:#6b5f55">Psst – nicht verraten! 🤫</p>`);
+    <p style="font-size:14px;color:#6e705f">Psst – nicht verraten! 🤫</p>`);
   return send({ to: giver.email, subject: `🎁 ${event.name}: Dein Wichtel-Los`, html });
 }
 
 function sendAdminLink(event, to, adminUrl, inviteUrl) {
   const html = layout(event.name, `
     <p>Deine Wichtelaktion ist angelegt! Hier sind deine Links:</p>
-    <p><b>Oberwichtel-Link</b> (geheim halten – damit verwaltest du die Aktion):<br><a href="${esc(adminUrl)}">${esc(adminUrl)}</a></p>
-    <p><b>Einladungslink</b> (für Freunde &amp; Familie):<br><a href="${esc(inviteUrl)}">${esc(inviteUrl)}</a></p>`);
+    <p><b>Oberwichtel-Link</b> (geheim halten – damit verwaltest du die Aktion):<br><a href="${esc(adminUrl)}" style="color:#a3312c">${esc(adminUrl)}</a></p>
+    <p><b>Einladungslink</b> (für Freunde &amp; Familie):<br><a href="${esc(inviteUrl)}" style="color:#a3312c">${esc(inviteUrl)}</a></p>`);
   return send({ to, subject: `⭐ Deine Wichtelaktion „${event.name}“`, html });
 }
 

@@ -10,28 +10,22 @@
 <body>
 <main>
   <header class="hero">
-    <div data-garland></div>
-    <div class="hero-art">
-      <span data-icon="gift-green" data-size="56"></span>
-      <span data-icon="tree" data-size="110"></span>
-      <span data-icon="gift" data-size="62"></span>
-    </div>
-    <p class="subtitle">Du bist eingeladen zum Wichteln!</p>
-    <h1 id="title">…</h1>
+    <svg class="hero-bow" aria-hidden="true"><use href="#schleife"/></svg>
+    <h1><span class="caps">Du bist<br>eingeladen</span><span class="script" id="title">…</span></h1>
+    <p class="tagline">zum Wichteln</p>
   </header>
 
   <div id="notfound" class="card hidden"><h2>Hoppla!</h2><p id="notfound-msg"></p></div>
 
   <div id="app" class="hidden">
-    <section class="card">
-      <div class="tape"></div>
+    <section class="card has-ribbon">
+      <svg class="ribbon" aria-hidden="true"><use href="#schleife"/></svg>
       <div class="invite-facts" id="facts"></div>
       <p class="invite-text" id="invite-text"></p>
       <div id="who" class="center" style="text-align:center"></div>
     </section>
 
     <form class="card" id="join">
-      <span class="corner-deko" data-icon="holly" data-size="60"></span>
       <h2>Ich bin dabei!</h2>
       <label for="name">Dein Name</label>
       <input id="name" name="name" required maxlength="80" autocomplete="name">
@@ -39,11 +33,11 @@
       <input id="email" name="email" type="email" required autocomplete="email">
       <label for="wishlist">Dein Wunschzettel</label>
       <textarea id="wishlist" name="wishlist" maxlength="3000" placeholder="Was wünschst du dir? Ideen, Lieblingsfarben, No-Gos, Größen …"></textarea>
-      <div class="actions center"><button class="btn big" type="submit">Einladung annehmen 🎁</button></div>
+      <div class="actions center"><button class="btn big" type="submit">Einladung annehmen</button></div>
     </form>
 
     <section class="card hidden center" id="done" style="text-align:center">
-      <div data-icon="star" data-size="90"></div>
+      <svg class="big-bow" aria-hidden="true"><use href="#schleife"/></svg>
       <h2 id="done-title">Du bist dabei!</h2>
       <p>Sobald der Oberwichtel die Ziehung startet, bekommst du eine E-Mail mit dem Namen und dem Wunschzettel deines Wichtelkindes.</p>
       <p class="muted" style="font-size:16px">Etwas vergessen? Melde dich einfach nochmal mit derselben E-Mail-Adresse an – dann wird dein Wunschzettel aktualisiert.</p>
@@ -55,6 +49,8 @@
       <p>Für diese Aktion ist keine Anmeldung mehr möglich. Frag doch den Oberwichtel – vielleicht gibt's nächstes Jahr wieder eine Runde! 🎄</p>
     </section>
   </div>
+
+  <footer>Vibe-coded by Nelli <span class="heart">♥</span></footer>
 </main>
 <script src="/common.js"></script>
 <script>
