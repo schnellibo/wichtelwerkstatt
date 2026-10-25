@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wichtelwerkstatt</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div data-garland></div>
+    <div class="hero-art">
+      <span data-icon="gift" data-size="64"></span>
+      <span data-icon="tree" data-size="120"></span>
+      <span data-icon="gift-green" data-size="54"></span>
+    </div>
+    <h1>Wichtelwerkstatt</h1>
+    <p class="subtitle">Wichteln mit Freunden &amp; Familie – ganz ohne Zettel im Hut.</p>
+  </header>
+
+  <form class="card" id="create">
+    <div class="tape"></div>
+    <span class="corner-deko" data-icon="star" data-size="56"></span>
+    <h2>Neue Wichtelaktion</h2>
+
+    <label for="name">Name der Aktion</label>
+    <input id="name" name="name" required maxlength="120" placeholder="z. B. Familienwichteln 2026">
+
+    <div class="row">
+      <div>
+        <label for="maxAmount">Max. Geschenkbetrag <small>(€)</small></label>
+        <input id="maxAmount" name="maxAmount" type="number" min="0" step="1" placeholder="25">
+      </div>
+      <div>
+        <label for="giftDate">Wichtelzeitpunkt</label>
+        <input id="giftDate" name="giftDate" type="date">
+      </div>
+    </div>
+
+    <label for="inviteText">Einladungstext</label>
+    <textarea id="inviteText" name="inviteText" maxlength="3000">Ho ho ho! 🎅
+Dieses Jahr wichteln wir wieder! Trag dich mit deinem Namen, deiner E-Mail-Adresse und deinem Wunschzettel ein – nach der Ziehung bekommst du per Mail, wen du beschenken darfst.</textarea>
+
+    <label for="organizerEmail">Deine E-Mail <small>(optional – wir schicken dir deinen Oberwichtel-Link)</small></label>
+    <input id="organizerEmail" name="organizerEmail" type="email" placeholder="oberwichtel@beispiel.de">
+
+    <div class="actions center">
+      <button class="btn big" type="submit">Aktion erstellen ✨</button>
+    </div>
+  </form>
+
+  <section class="card">
+    <h3>So funktioniert's</h3>
+    <ol>
+      <li>Du legst die Aktion an und wirst zum <b>Oberwichtel</b>.</li>
+      <li>Du schickst den Einladungslink an Freunde &amp; Familie.</li>
+      <li>Alle tragen Namen, E-Mail und Wunschzettel ein.</li>
+      <li>Mit einem Klick startest du die Ziehung – jede:r bekommt per Mail ein Los.</li>
+    </ol>
+  </section>
+
+  <footer>Mit ❤️ und viel Glühwein gebastelt</footer>
+</main>
+<script src="/common.js"></script>
+<script>
+  document.getElementById('create').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const btn = ev.target.querySelector('button');
+    btn.disabled = true;
+    try {
+      const { adminToken } = await api('/api/events', { method: 'POST', body: formData(ev.target) });
+      location.href = `/admin/${adminToken}?neu=1`;
+    } catch (err) {
+      toast(err.message, true);
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Fly.io-Konfiguration. Den App-Namen bei `fly launch` ggf. anpassen (muss weltweit eindeutig sein).
+app = 'wichtelwerkstatt'
+primary_region = 'fra'
+
+[build]
+
+[env]
+  PORT = '3000'
+  DATA_FILE = '/data/wichtel.json'
+
+# Persistenter Speicher für data/wichtel.json
+[mounts]
+  source = 'wichtel_data'
+  destination = '/data'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  # Immer an lassen: geplante Ziehungen werden jede Minute geprüft.
+  auto_stop_machines = 'off'
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = '10s'
+    interval = '30s'
+    timeout = '5s'
+    method = 'GET'
+    path = '/'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'

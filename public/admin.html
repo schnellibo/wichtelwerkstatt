@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oberwichtel-Zentrale</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div data-garland></div>
+    <div class="hero-art"><span data-icon="star" data-size="70"></span></div>
+    <h1 id="title">Oberwichtel-Zentrale</h1>
+    <p class="subtitle"><span id="status" class="badge open">Anmeldung offen</span></p>
+  </header>
+
+  <div id="notfound" class="card hidden"><h2>Hoppla!</h2><p>Diese Wichtelaktion gibt es nicht. Prüfe deinen Oberwichtel-Link.</p></div>
+
+  <div id="app" class="hidden">
+    <section class="card" id="welcome-card">
+      <div class="tape"></div>
+      <h2>Deine Links</h2>
+      <div id="new-note" class="note green hidden">
+        🎉 Deine Aktion ist angelegt! <b>Speichere dir diese Seite als Lesezeichen</b> – nur mit diesem Link kannst du die Aktion verwalten.
+      </div>
+      <label>Einladungslink <small>– an Freunde &amp; Familie schicken</small></label>
+      <div class="linkbox">
+        <input id="invite-link" readonly>
+        <button class="btn green small" data-copy="invite-link">Kopieren</button>
+      </div>
+      <div class="actions">
+        <a class="btn ghost" id="share-whatsapp" target="_blank" rel="noopener">💬 WhatsApp</a>
+        <a class="btn ghost" id="share-mail">✉️ E-Mail</a>
+        <a class="btn ghost" id="open-invite" target="_blank" rel="noopener">👀 Vorschau</a>
+      </div>
+      <label>Oberwichtel-Link <small>– geheim halten!</small></label>
+      <div class="linkbox">
+        <input id="admin-link" readonly>
+        <button class="btn ghost small" data-copy="admin-link">Kopieren</button>
+      </div>
+    </section>
+
+    <form class="card" id="details">
+      <span class="corner-deko" data-icon="holly" data-size="60"></span>
+      <h2>Die Aktion</h2>
+      <label for="name">Name der Aktion</label>
+      <input id="name" name="name" required maxlength="120">
+      <div class="row">
+        <div>
+          <label for="maxAmount">Max. Geschenkbetrag <small>(€)</small></label>
+          <input id="maxAmount" name="maxAmount" type="number" min="0" step="1">
+        </div>
+        <div>
+          <label for="giftDate">Wichtelzeitpunkt</label>
+          <input id="giftDate" name="giftDate" type="date">
+        </div>
+      </div>
+      <label for="inviteText">Einladungstext</label>
+      <textarea id="inviteText" name="inviteText" maxlength="3000"></textarea>
+      <div class="actions"><button class="btn green" type="submit">Speichern</button></div>
+    </form>
+
+    <section class="card">
+      <h2>Wichtel <span class="muted" id="count"></span></h2>
+      <p id="empty" class="muted">Noch niemand angemeldet. Verschick den Einladungslink! 📨</p>
+      <ul class="wichtel-list" id="participants"></ul>
+    </section>
+
+    <section class="card" id="exclusions-card">
+      <span class="corner-deko" data-icon="candy" data-size="60"></span>
+      <h2>Wer darf sich nicht ziehen?</h2>
+      <p class="muted">Z. B. Paare oder Geschwister. Die beiden ziehen sich dann gegenseitig nicht. (Sich selbst zieht ohnehin niemand.)</p>
+      <form id="excl-form" class="row">
+        <div><label for="excl-a">Wichtel 1</label><select id="excl-a" name="a"></select></div>
+        <div><label for="excl-b">Wichtel 2</label><select id="excl-b" name="b"></select></div>
+        <div class="actions"><button class="btn small" type="submit">Ausschluss hinzufügen</button></div>
+      </form>
+      <div class="chips" id="exclusions"></div>
+    </section>
+
+    <section class="card" id="draw-card">
+      <div class="tape"></div>
+      <h2>Die große Ziehung</h2>
+
+      <div id="draw-open">
+        <p>Wenn alle dabei sind, startest du die Ziehung. Jede:r bekommt dann per E-Mail den Namen und den Wunschzettel der Person, die sie oder er beschenken darf.</p>
+        <div id="smtp-note" class="note hidden">ℹ️ Auf diesem Server ist noch kein E-Mail-Versand eingerichtet – die Mails werden im Ordner <code>outbox</code> abgelegt (siehe README).</div>
+        <div id="draw-error" class="note red hidden"></div>
+
+        <div class="actions center">
+          <button class="btn big" id="draw-btn">🎲 Jetzt ziehen!</button>
+        </div>
+
+        <details style="margin-top:22px">
+          <summary style="cursor:pointer;color:var(--tanne)">…oder automatisch zu einem bestimmten Zeitpunkt ziehen</summary>
+          <form id="schedule" class="row" style="align-items:end">
+            <div><label for="drawAt">Ziehung am</label><input id="drawAt" name="drawAt" type="datetime-local"></div>
+            <div class="actions">
+              <button class="btn green small" type="submit">Planen</button>
+              <button class="btn ghost small" type="button" id="unschedule">Entfernen</button>
+            </div>
+          </form>
+          <p id="scheduled-info" class="muted"></p>
+        </details>
+      </div>
+
+      <div id="draw-done" class="hidden center" style="text-align:center">
+        <div data-icon="gift" data-size="90"></div>
+        <h3>Die Lose sind gezogen!</h3>
+        <p id="drawn-at" class="muted"></p>
+        <p id="mail-status"></p>
+        <div class="actions center"><button class="btn gold hidden" id="resend-btn">Fehlgeschlagene Mails erneut senden</button></div>
+        <p class="muted" style="font-size:16px">Wer wen gezogen hat, bleibt geheim – auch für dich. 🤫</p>
+      </div>
+    </section>
+  </div>
+  <footer>Wichtelwerkstatt · <a href="/">neue Aktion anlegen</a></footer>
+</main>
+<script src="/common.js"></script>
+<script>
+  const token = location.pathname.split('/').pop();
+  const base = `/api/admin/${token}`;
+  let ev = null;
+  const $ = (id) => document.getElementById(id);
+
+  function render(data) {
+    ev = data;
+    const drawn = !!ev.drawnAt;
+    document.title = `${ev.name} – Oberwichtel-Zentrale`;
+    $('title').textContent = ev.name;
+    $('status').textContent = drawn ? 'Gezogen ✓' : 'Anmeldung offen';
+    $('status').className = 'badge ' + (drawn ? 'done' : 'open');
+
+    const inviteUrl = `${location.origin}/einladung/${ev.inviteToken}`;
+    $('invite-link').value = inviteUrl;
+    $('admin-link').value = location.origin + location.pathname;
+    $('open-invite').href = inviteUrl;
+    const msg = `${ev.name} 🎁\nMachst du mit beim Wichteln? Hier anmelden: ${inviteUrl}`;
+    $('share-whatsapp').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    $('share-mail').href = `mailto:?subject=${encodeURIComponent('Einladung: ' + ev.name)}&body=${encodeURIComponent(msg)}`;
+
+    const form = $('details');
+    if (document.activeElement?.form !== form) {
+      for (const k of ['name', 'maxAmount', 'giftDate', 'inviteText']) form[k].value = ev[k] || '';
+    }
+
+    // Teilnehmer
+    $('count').textContent = ev.participants.length ? `(${ev.participants.length})` : '';
+    $('empty').classList.toggle('hidden', ev.participants.length > 0);
+    $('participants').innerHTML = ev.participants.map((p) => `
+      <li>
+        <div class="avatar" style="background:${avatarColor(p.name)}">${esc(p.name[0].toUpperCase())}</div>
+        <div>
+          <b>${esc(p.name)}</b> <span class="meta">· ${esc(p.email)}</span>
+          ${p.mail === 'sent' ? ' <span class="meta">· ✉️ Los verschickt</span>' : ''}
+          ${p.mail === 'error' ? ' <span class="meta" style="color:var(--rot)">· ⚠️ Mail fehlgeschlagen</span>' : ''}
+          ${p.wishlist ? `<details><summary>Wunschzettel ansehen</summary><div class="wish">${esc(p.wishlist)}</div></details>` : '<div class="meta">(kein Wunschzettel)</div>'}
+        </div>
+        ${drawn ? '' : `<button class="btn ghost small" data-remove="${p.id}" title="Entfernen">✕</button>`}
+      </li>`).join('');
+
+    // Ausschlüsse
+    const nameOf = Object.fromEntries(ev.participants.map((p) => [p.id, p.name]));
+    const options = ev.participants.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+    const prevA = $('excl-a').value, prevB = $('excl-b').value;
+    $('excl-a').innerHTML = options;
+    $('excl-b').innerHTML = options;
+    if (prevA && nameOf[prevA]) $('excl-a').value = prevA;
+    if (prevB && nameOf[prevB]) $('excl-b').value = prevB;
+    else if (ev.participants[1]) $('excl-b').value = ev.participants[1].id;
+    $('excl-form').classList.toggle('hidden', drawn || ev.participants.length < 2);
+    $('exclusions').innerHTML = ev.exclusions.length
+      ? ev.exclusions.map(([a, b], i) => `<span class="chip excl">${esc(nameOf[a])} ⇹ ${esc(nameOf[b])}${drawn ? '' : ` <button data-excl="${i}" title="Entfernen">×</button>`}</span>`).join('')
+      : '<span class="muted">Keine Ausschlüsse.</span>';
+
+    // Ziehung
+    $('draw-open').classList.toggle('hidden', drawn);
+    $('draw-done').classList.toggle('hidden', !drawn);
+    $('smtp-note').classList.toggle('hidden', ev.smtpConfigured);
+    $('draw-btn').disabled = ev.participants.length < 3;
+    $('draw-btn').title = ev.participants.length < 3 ? 'Mindestens 3 Wichtel nötig' : '';
+    $('draw-error').classList.toggle('hidden', !ev.drawError);
+    $('draw-error').textContent = ev.drawError ? `⚠️ Die geplante Ziehung hat nicht geklappt: ${ev.drawError}` : '';
+    $('drawAt').value = isoToLocalInput(ev.drawAt);
+    $('scheduled-info').textContent = ev.drawAt ? `⏰ Geplant: ${formatDate(ev.drawAt, true)}` : '';
+
+    if (drawn) {
+      $('drawn-at').textContent = `Gezogen am ${formatDate(ev.drawnAt, true)}`;
+      const sent = ev.participants.filter((p) => p.mail === 'sent').length;
+      const failed = ev.participants.filter((p) => p.mail === 'error').length;
+      $('mail-status').textContent = `✉️ ${sent} von ${ev.participants.length} Losen verschickt` + (failed ? ` · ⚠️ ${failed} fehlgeschlagen` : '');
+      $('resend-btn').classList.toggle('hidden', !failed);
+    }
+  }
+
+  async function act(promise, okMsg) {
+    try {
+      render(await promise);
+      if (okMsg) toast(okMsg);
+    } catch (err) { toast(err.message, true); }
+  }
+
+  // Events
+  $('details').addEventListener('submit', (e) => {
+    e.preventDefault();
+    act(api(base, { method: 'PUT', body: formData(e.target) }), 'Gespeichert ✓');
+  });
+  $('participants').addEventListener('click', (e) => {
+    const pid = e.target.dataset.remove;
+    if (!pid) return;
+    const p = ev.participants.find((x) => x.id === pid);
+    if (confirm(`${p.name} wirklich von der Wichtelaktion entfernen?`))
+      act(api(`${base}/participants/${pid}`, { method: 'DELETE' }), `${p.name} wurde entfernt`);
+  });
+  $('excl-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    act(api(`${base}/exclusions`, { method: 'POST', body: formData(e.target) }), 'Ausschluss gespeichert');
+  });
+  $('exclusions').addEventListener('click', (e) => {
+    const i = e.target.dataset.excl;
+    if (i !== undefined) act(api(`${base}/exclusions/${i}`, { method: 'DELETE' }));
+  });
+  $('schedule').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = $('drawAt').value;
+    if (!v) return toast('Bitte wähle Datum und Uhrzeit.', true);
+    if (new Date(v) < new Date()) return toast('Der Zeitpunkt liegt in der Vergangenheit.', true);
+    act(api(base, { method: 'PUT', body: { drawAt: localInputToIso(v) } }), 'Ziehung geplant ⏰');
+  });
+  $('unschedule').addEventListener('click', () => act(api(base, { method: 'PUT', body: { drawAt: '' } }), 'Planung entfernt'));
+  $('draw-btn').addEventListener('click', async () => {
+    if (!confirm(`Jetzt die Lose für ${ev.participants.length} Wichtel ziehen und per E-Mail verschicken?\n\nDanach kann sich niemand mehr anmelden.`)) return;
+    $('draw-btn').disabled = true;
+    $('draw-btn').textContent = '🎲 Wird gezogen…';
+    try {
+      render(await api(`${base}/draw`, { method: 'POST' }));
+      confetti();
+      toast('Die Lose sind verschickt! 🎉');
+    } catch (err) {
+      toast(err.message, true);
+      $('draw-btn').disabled = false;
+    }
+    $('draw-btn').textContent = '🎲 Jetzt ziehen!';
+  });
+  $('resend-btn').addEventListener('click', () => act(api(`${base}/resend`, { method: 'POST' }), 'Erneut versucht'));
+  document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+    const input = $(b.dataset.copy);
+    try { await navigator.clipboard.writeText(input.value); } catch { input.select(); document.execCommand('copy'); }
+    toast('Link kopiert 📋');
+  }));
+
+  // Laden + alle 20 s aktualisieren, damit neue Anmeldungen auftauchen
+  async function load() {
+    try {
+      render(await api(base));
+      $('app').classList.remove('hidden');
+    } catch {
+      $('notfound').classList.remove('hidden');
+      $('app').classList.add('hidden');
+      clearInterval(timer);
+    }
+  }
+  if (new URLSearchParams(location.search).has('neu')) {
+    $('new-note').classList.remove('hidden');
+    history.replaceState(null, '', location.pathname);
+  }
+  load();
+  const timer = setInterval(() => { if (!document.hidden) load(); }, 20000);
+</script>
+</body>
+</html>
