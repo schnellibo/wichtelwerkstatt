@@ -19,6 +19,7 @@ npm start          # → http://localhost:3000
 3. Eingeladene tragen **Name, E-Mail und Wunschzettel** ein. Mit derselben E-Mail können sie ihre Angaben später noch ändern.
 4. In der Zentrale legst du **Ausschlüsse** fest (zwei Personen, die sich nicht gegenseitig ziehen).
 5. **🎲 Jetzt ziehen!** startet die Ziehung. Alternativ kannst du einen Zeitpunkt für eine automatische Ziehung einplanen.
+6. Ganz unten in der Zentrale kannst du die Aktion **endgültig löschen**, z. B. nach einem Testlauf oder wenn Weihnachten vorbei ist.
 
 Regeln der Ziehung: Niemand zieht sich selbst, ausgeschlossene Paare ziehen sich nicht gegenseitig, und jede Person wird genau einmal gezogen.
 Man braucht mindestens 3 Teilnehmende. Wer wen gezogen hat, sieht auch der Oberwichtel nicht.

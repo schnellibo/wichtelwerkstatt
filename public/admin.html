@@ -110,7 +110,19 @@
         <p class="muted" style="font-size:16px">Wer wen gezogen hat, bleibt geheim – auch für dich. 🤫</p>
       </div>
     </section>
+
+    <section class="card" id="delete-card">
+      <h2>Aktion löschen</h2>
+      <p class="muted center">Löscht die Aktion mit allen Anmeldungen und Wunschzetteln endgültig. Der Einladungslink und dein Oberwichtel-Link funktionieren danach nicht mehr.</p>
+      <div class="actions center"><button class="btn gold" id="delete-btn">Aktion endgültig löschen</button></div>
+    </section>
   </div>
+
+  <section id="deleted" class="card hidden center" style="text-align:center">
+    <h2>Aktion gelöscht</h2>
+    <p>Die Wichtelaktion und alle Anmeldungen sind gelöscht.</p>
+    <div class="actions center"><a class="btn" href="/">Neue Aktion anlegen</a></div>
+  </section>
   <footer><a href="/">Neue Aktion anlegen</a> · Vibe-coded by Nelli <span class="heart">♥</span></footer>
 </main>
 <script src="/common.js"></script>
@@ -238,6 +250,22 @@
       $('draw-btn').disabled = false;
     }
     $('draw-btn').textContent = 'Jetzt ziehen';
+  });
+  $('delete-btn').addEventListener('click', async () => {
+    if (!confirm(`„${ev.name}“ wirklich endgültig löschen?\n\nAlle Anmeldungen und Wunschzettel gehen verloren. Das lässt sich nicht rückgängig machen.`)) return;
+    $('delete-btn').disabled = true;
+    try {
+      await api(base, { method: 'DELETE' });
+      clearInterval(timer);
+      $('app').classList.add('hidden');
+      $('deleted').classList.remove('hidden');
+      document.title = 'Aktion gelöscht';
+      $('status').classList.add('hidden');
+      window.scrollTo(0, 0);
+    } catch (err) {
+      toast(err.message, true);
+      $('delete-btn').disabled = false;
+    }
   });
   $('resend-btn').addEventListener('click', () => act(api(`${base}/resend`, { method: 'POST' }), 'Erneut versucht'));
   document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
