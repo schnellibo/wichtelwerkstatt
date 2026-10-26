@@ -23,6 +23,7 @@
       <div id="new-note" class="note green hidden">
         🎉 Deine Aktion ist angelegt! <b>Speichere dir diese Seite als Lesezeichen</b> – nur mit diesem Link kannst du die Aktion verwalten.
       </div>
+      <div id="mail-note" class="note hidden"></div>
       <label>Einladungslink <small>– an Freunde &amp; Familie schicken</small></label>
       <div class="linkbox">
         <input id="invite-link" readonly>
@@ -288,6 +289,15 @@
   if (new URLSearchParams(location.search).has('neu')) {
     $('new-note').classList.remove('hidden');
     history.replaceState(null, '', location.pathname);
+    let mail = null;
+    try { mail = JSON.parse(sessionStorage.getItem('adminMail')); sessionStorage.removeItem('adminMail'); } catch {}
+    if (mail) {
+      $('mail-note').innerHTML = mail.status === 'sent'
+        ? `📬 Wir haben dir den Link an <b>${esc(mail.to)}</b> geschickt. Nichts angekommen? Schau im Spam-Ordner nach.`
+        : `⚠️ Die E-Mail an <b>${esc(mail.to)}</b> konnte nicht verschickt werden (${esc(mail.error)}). Speichere dir diese Seite unbedingt als Lesezeichen.`;
+      $('mail-note').classList.toggle('red', mail.status !== 'sent');
+      $('mail-note').classList.remove('hidden');
+    }
   }
   load();
   const timer = setInterval(() => { if (!document.hidden) load(); }, 20000);
