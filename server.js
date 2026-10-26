@@ -86,6 +86,9 @@ setInterval(() => {
 app.post('/api/events', async (req, res) => {
   const name = clean(req.body.name, 120);
   if (!name) return res.status(400).json({ error: 'Bitte gib der Aktion einen Namen.' });
+  const organizerEmail = clean(req.body.organizerEmail, 200);
+  if (organizerEmail && !isEmail(organizerEmail))
+    return res.status(400).json({ error: 'Bitte prüfe deine E-Mail-Adresse – oder lass das Feld leer.' });
   const e = {
     id: id(), adminToken: token(), inviteToken: token(), name,
     maxAmount: '', giftDate: '', inviteText: '', drawAt: null,
@@ -95,13 +98,19 @@ app.post('/api/events', async (req, res) => {
   applyDetails(e, req.body);
   store.add(e);
 
-  const organizerEmail = clean(req.body.organizerEmail, 200);
-  if (organizerEmail && isEmail(organizerEmail)) {
+  // Auf den Versand warten, damit der Oberwichtel erfährt, ob die Mail rausging
+  let adminMail = null;
+  if (organizerEmail) {
     const b = baseUrl(req);
-    mailer.sendAdminLink(e, organizerEmail, `${b}/admin/${e.adminToken}`, `${b}/einladung/${e.inviteToken}`)
-      .catch((err) => console.error('[mail] Admin-Link:', err.message));
+    try {
+      await mailer.sendAdminLink(e, organizerEmail, `${b}/admin/${e.adminToken}`, `${b}/einladung/${e.inviteToken}`);
+      adminMail = { status: 'sent', to: organizerEmail };
+    } catch (err) {
+      console.error(`[mail] Admin-Link an ${organizerEmail} fehlgeschlagen:`, err.message);
+      adminMail = { status: 'error', to: organizerEmail, error: err.message };
+    }
   }
-  res.json({ adminToken: e.adminToken });
+  res.json({ adminToken: e.adminToken, adminMail });
 });
 
 const withAdmin = (req, res, next) => {

@@ -63,12 +63,16 @@ Dieses Jahr wichteln wir wieder! Trag dich mit deinem Namen, deiner E-Mail-Adres
     ev.preventDefault();
     const btn = ev.target.querySelector('button');
     btn.disabled = true;
+    btn.textContent = 'Wird angelegt…';
     try {
-      const { adminToken } = await api('/api/events', { method: 'POST', body: formData(ev.target) });
+      const { adminToken, adminMail } = await api('/api/events', { method: 'POST', body: formData(ev.target) });
+      // Ergebnis des Mailversands nur für diese eine Anzeige merken
+      try { if (adminMail) sessionStorage.setItem('adminMail', JSON.stringify(adminMail)); } catch {}
       location.href = `/admin/${adminToken}?neu=1`;
     } catch (err) {
       toast(err.message, true);
       btn.disabled = false;
+      btn.textContent = 'Aktion erstellen';
     }
   });
 </script>

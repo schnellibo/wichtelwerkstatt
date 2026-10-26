@@ -12,6 +12,10 @@ const transport = SMTP_HOST
       port: Number(SMTP_PORT || 587),
       secure: SMTP_SECURE === 'true',
       auth: SMTP_USER ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
+      // nicht minutenlang hängen, wenn der Mailserver nicht antwortet
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000,
     })
   : null;
 
@@ -35,6 +39,7 @@ function layout(title, body) {
 async function send({ to, subject, html }) {
   if (transport) {
     await transport.sendMail({ from: MAIL_FROM || SMTP_USER, to, subject, html });
+    console.log(`[mail] gesendet → ${to}: "${subject}"`);
     return;
   }
   fs.mkdirSync(OUTBOX, { recursive: true });
