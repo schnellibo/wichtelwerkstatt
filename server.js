@@ -114,6 +114,12 @@ const notDrawn = (req, res, next) =>
 
 app.get('/api/admin/:token', withAdmin, (req, res) => res.json(adminView(req.event)));
 
+// Aktion endgültig löschen – samt Anmeldungen, Wunschzetteln und Losen
+app.delete('/api/admin/:token', withAdmin, (req, res) => {
+  store.remove(req.event);
+  res.json({ ok: true });
+});
+
 app.put('/api/admin/:token', withAdmin, (req, res) => {
   const e = req.event;
   if (req.body.drawAt !== undefined && e.drawError) e.drawError = null; // neuer Versuch

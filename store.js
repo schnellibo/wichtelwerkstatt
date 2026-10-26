@@ -19,6 +19,7 @@ function save() {
 module.exports = {
   all: () => data.events,
   add(event) { data.events.push(event); save(); return event; },
+  remove(event) { data.events = data.events.filter((e) => e !== event); save(); },
   byAdminToken: (t) => data.events.find((e) => e.adminToken === t),
   byInviteToken: (t) => data.events.find((e) => e.inviteToken === t),
   save,
