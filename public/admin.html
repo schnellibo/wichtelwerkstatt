@@ -257,7 +257,7 @@
     $('delete-btn').disabled = true;
     try {
       await api(base, { method: 'DELETE' });
-      clearInterval(timer);
+      stopRefresh();
       $('app').classList.add('hidden');
       $('deleted').classList.remove('hidden');
       document.title = 'Aktion gelöscht';
@@ -283,7 +283,7 @@
     } catch {
       $('notfound').classList.remove('hidden');
       $('app').classList.add('hidden');
-      clearInterval(timer);
+      stopRefresh();
     }
   }
   if (new URLSearchParams(location.search).has('neu')) {
@@ -300,7 +300,14 @@
     }
   }
   load();
-  const timer = setInterval(() => { if (!document.hidden) load(); }, 20000);
+  // Alle 20 s aktualisieren – und sofort, wenn die Seite wieder sichtbar wird
+  // (Tab gewechselt, App wieder geöffnet, Seite aus dem Zurück-Cache geholt)
+  let refreshing = true;
+  const refresh = () => { if (refreshing && !document.hidden) load(); };
+  const timer = setInterval(refresh, 20000);
+  document.addEventListener('visibilitychange', refresh);
+  window.addEventListener('pageshow', (e) => { if (e.persisted) refresh(); });
+  function stopRefresh() { refreshing = false; clearInterval(timer); }
 </script>
 </body>
 </html>
