@@ -9,6 +9,8 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.set('trust proxy', true); // hinter Fly.io-Proxy: echtes https/Host für Links
 app.use(express.json({ limit: '100kb' }));
+// API-Antworten nie zwischenspeichern – die Teilnehmerliste soll immer aktuell sein
+app.use('/api', (req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 app.use(express.static(path.join(__dirname, 'public')));
 
 const token = () => crypto.randomBytes(18).toString('base64url');
