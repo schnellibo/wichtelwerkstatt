@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wichtelwerkstatt</title>
+  <title data-i18n="title.start">Wichtelwerkstatt</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
 </head>
@@ -11,59 +11,60 @@
 <main>
   <header class="hero">
     <svg class="hero-bow" aria-hidden="true"><use href="#schleife"/></svg>
-    <h1><span class="caps">Willkommen<br>in der</span><span class="script">Wichtelwerkstatt</span></h1>
-    <p class="tagline">Wichteln mit Familie &amp; Freunden</p>
+    <h1><span class="caps" data-i18n="hero.welcome">Willkommen<br>in der</span><span class="script">Wichtelwerkstatt</span></h1>
+    <p class="tagline" data-i18n="hero.tagline">Wichteln mit Familie &amp; Freunden</p>
   </header>
 
   <form class="card has-ribbon" id="create">
     <svg class="ribbon" aria-hidden="true"><use href="#schleife"/></svg>
-    <h2>Neue Wichtelaktion</h2>
+    <h2 data-i18n="create.heading">Neue Wichtelaktion</h2>
 
-    <label for="name">Name der Aktion</label>
-    <input id="name" name="name" required maxlength="120" placeholder="z. B. Familienwichteln 2026">
+    <label for="name" data-i18n="create.name">Name der Aktion</label>
+    <input id="name" name="name" required maxlength="120" placeholder="z. B. Familienwichteln 2026" data-i18n-placeholder="create.namePh">
 
     <div class="row">
       <div>
-        <label for="maxAmount">Max. Geschenkbetrag <small>(€)</small></label>
+        <label for="maxAmount" data-i18n="create.maxAmount">Max. Geschenkbetrag <small>(€)</small></label>
         <input id="maxAmount" name="maxAmount" type="number" min="0" step="1" placeholder="25">
       </div>
       <div>
-        <label for="giftDate">Wichtelzeitpunkt</label>
+        <label for="giftDate" data-i18n="create.giftDate">Wichtelzeitpunkt</label>
         <input id="giftDate" name="giftDate" type="date">
       </div>
     </div>
 
-    <label for="inviteText">Einladungstext</label>
-    <textarea id="inviteText" name="inviteText" maxlength="3000">Ho ho ho! 🎅
+    <label for="inviteText" data-i18n="create.inviteText">Einladungstext</label>
+    <textarea id="inviteText" name="inviteText" maxlength="3000" data-i18n="create.inviteDefault">Ho ho ho! 🎅
 Dieses Jahr wichteln wir wieder! Trag dich mit deinem Namen, deiner E-Mail-Adresse und deinem Wunschzettel ein – nach der Ziehung bekommst du per Mail, wen du beschenken darfst.</textarea>
 
-    <label for="organizerEmail">Deine E-Mail <small>(optional – wir schicken dir deinen Oberwichtel-Link)</small></label>
-    <input id="organizerEmail" name="organizerEmail" type="email" placeholder="oberwichtel@beispiel.de">
+    <label for="organizerEmail" data-i18n="create.email">Deine E-Mail <small>(optional – wir schicken dir deinen Oberwichtel-Link)</small></label>
+    <input id="organizerEmail" name="organizerEmail" type="email" placeholder="oberwichtel@beispiel.de" data-i18n-placeholder="create.emailPh">
 
     <div class="actions center">
-      <button class="btn big" type="submit">Aktion erstellen</button>
+      <button class="btn big" type="submit" data-i18n="create.submit">Aktion erstellen</button>
     </div>
   </form>
 
   <section class="card">
-    <h2>So funktioniert's</h2>
+    <h2 data-i18n="how.heading">So funktioniert's</h2>
     <ol class="steps">
-      <li><span>Du legst die Aktion an und wirst zum <b>Oberwichtel</b>.</span></li>
-      <li><span>Du schickst den Einladungslink an Freunde &amp; Familie.</span></li>
-      <li><span>Alle tragen Namen, E-Mail und Wunschzettel ein.</span></li>
-      <li><span>Mit einem Klick startest du die Ziehung – jede:r bekommt per Mail ein Los.</span></li>
+      <li><span data-i18n="how.1">Du legst die Aktion an und wirst zum <b>Oberwichtel</b>.</span></li>
+      <li><span data-i18n="how.2">Du schickst den Einladungslink an Freunde &amp; Familie.</span></li>
+      <li><span data-i18n="how.3">Alle tragen Namen, E-Mail und Wunschzettel ein.</span></li>
+      <li><span data-i18n="how.4">Mit einem Klick startest du die Ziehung – jede:r bekommt per Mail ein Los.</span></li>
     </ol>
   </section>
 
   <footer>Vibe-coded by Nelli <span class="heart">♥</span></footer>
 </main>
+<script src="/i18n.js"></script>
 <script src="/common.js"></script>
 <script>
   document.getElementById('create').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const btn = ev.target.querySelector('button');
     btn.disabled = true;
-    btn.textContent = 'Wird angelegt…';
+    btn.textContent = t('create.creating');
     try {
       const { adminToken, adminMail } = await api('/api/events', { method: 'POST', body: formData(ev.target) });
       // Ergebnis des Mailversands nur für diese eine Anzeige merken
@@ -72,7 +73,7 @@ Dieses Jahr wichteln wir wieder! Trag dich mit deinem Namen, deiner E-Mail-Adres
     } catch (err) {
       toast(err.message, true);
       btn.disabled = false;
-      btn.textContent = 'Aktion erstellen';
+      btn.textContent = t('create.submit');
     }
   });
 </script>

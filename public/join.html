@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wichtel-Einladung</title>
+  <title data-i18n="title.join">Wichtel-Einladung</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎄</text></svg>">
 </head>
@@ -11,11 +11,11 @@
 <main>
   <header class="hero">
     <svg class="hero-bow" aria-hidden="true"><use href="#schleife"/></svg>
-    <h1><span class="caps">Du bist<br>eingeladen</span><span class="script" id="title">…</span></h1>
-    <p class="tagline">zum Wichteln</p>
+    <h1><span class="caps" data-i18n="join.caps">Du bist<br>eingeladen</span><span class="script" id="title">…</span></h1>
+    <p class="tagline" data-i18n="join.tagline">zum Wichteln</p>
   </header>
 
-  <div id="notfound" class="card hidden"><h2>Hoppla!</h2><p id="notfound-msg"></p></div>
+  <div id="notfound" class="card hidden"><h2 data-i18n="notfound.heading">Hoppla!</h2><p id="notfound-msg"></p></div>
 
   <div id="app" class="hidden">
     <section class="card has-ribbon">
@@ -26,32 +26,33 @@
     </section>
 
     <form class="card" id="join">
-      <h2>Ich bin dabei!</h2>
-      <label for="name">Dein Name</label>
+      <h2 data-i18n="join.heading">Ich bin dabei!</h2>
+      <label for="name" data-i18n="join.name">Dein Name</label>
       <input id="name" name="name" required maxlength="80" autocomplete="name">
-      <label for="email">Deine E-Mail-Adresse <small>– hierhin kommt dein Wichtel-Los</small></label>
+      <label for="email" data-i18n="join.email">Deine E-Mail-Adresse <small>– hierhin kommt dein Wichtel-Los</small></label>
       <input id="email" name="email" type="email" required autocomplete="email">
-      <label for="wishlist">Dein Wunschzettel</label>
-      <textarea id="wishlist" name="wishlist" maxlength="3000" placeholder="Was wünschst du dir? Ideen, Lieblingsfarben, No-Gos, Größen …"></textarea>
-      <div class="actions center"><button class="btn big" type="submit">Einladung annehmen</button></div>
+      <label for="wishlist" data-i18n="join.wishlist">Dein Wunschzettel</label>
+      <textarea id="wishlist" name="wishlist" maxlength="3000" placeholder="Was wünschst du dir? Ideen, Lieblingsfarben, No-Gos, Größen …" data-i18n-placeholder="join.wishlistPh"></textarea>
+      <div class="actions center"><button class="btn big" type="submit" data-i18n="join.submit">Einladung annehmen</button></div>
     </form>
 
     <section class="card hidden center" id="done" style="text-align:center">
       <svg class="big-bow" aria-hidden="true"><use href="#schleife"/></svg>
-      <h2 id="done-title">Du bist dabei!</h2>
-      <p>Sobald der Oberwichtel die Ziehung startet, bekommst du eine E-Mail mit dem Namen und dem Wunschzettel deines Wichtelkindes.</p>
-      <p class="muted" style="font-size:16px">Etwas vergessen? Melde dich einfach nochmal mit derselben E-Mail-Adresse an – dann wird dein Wunschzettel aktualisiert.</p>
-      <button class="btn ghost" id="again">Wunschzettel ändern</button>
+      <h2 id="done-title" data-i18n="join.doneTitle">Du bist dabei!</h2>
+      <p data-i18n="join.doneText">Sobald der Oberwichtel die Ziehung startet, bekommst du eine E-Mail mit dem Namen und dem Wunschzettel deines Wichtelkindes.</p>
+      <p class="muted" style="font-size:16px" data-i18n="join.doneHint">Etwas vergessen? Melde dich einfach nochmal mit derselben E-Mail-Adresse an – dann wird dein Wunschzettel aktualisiert.</p>
+      <button class="btn ghost" id="again" data-i18n="join.again">Wunschzettel ändern</button>
     </section>
 
     <section class="card hidden" id="closed" style="text-align:center">
-      <h2>Die Lose sind schon gezogen</h2>
-      <p>Für diese Aktion ist keine Anmeldung mehr möglich. Frag doch den Oberwichtel – vielleicht gibt's nächstes Jahr wieder eine Runde! 🎄</p>
+      <h2 data-i18n="join.closedHeading">Die Lose sind schon gezogen</h2>
+      <p data-i18n="join.closedText">Für diese Aktion ist keine Anmeldung mehr möglich. Frag doch den Oberwichtel – vielleicht gibt's nächstes Jahr wieder eine Runde! 🎄</p>
     </section>
   </div>
 
   <footer>Vibe-coded by Nelli <span class="heart">♥</span></footer>
 </main>
+<script src="/i18n.js"></script>
 <script src="/common.js"></script>
 <script>
   const token = location.pathname.split('/').pop();
@@ -59,18 +60,18 @@
 
   function renderWho(names) {
     $('who').innerHTML = names.length
-      ? `<p class="muted" style="margin-bottom:0">Schon dabei:</p><div class="chips center">${names.map((n) => `<span class="chip">${esc(n)}</span>`).join('')}</div>`
-      : '<p class="muted">Sei die erste Person, die mitmacht!</p>';
+      ? `<p class="muted" style="margin-bottom:0">${t('join.already')}</p><div class="chips center">${names.map((n) => `<span class="chip">${esc(n)}</span>`).join('')}</div>`
+      : `<p class="muted">${t('join.first')}</p>`;
   }
 
   async function load() {
     try {
       const ev = await api(`/api/invite/${token}`);
-      document.title = `Einladung: ${ev.name}`;
+      document.title = t('join.docTitle', { name: ev.name });
       $('title').textContent = ev.name;
       $('facts').innerHTML = [
-        ev.maxAmount ? `<div class="fact"><b>${esc(ev.maxAmount)} €</b>max. Geschenkwert</div>` : '',
-        ev.giftDate ? `<div class="fact"><b>${esc(new Date(ev.giftDate + 'T12:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }))}</b>${esc(formatDate(ev.giftDate).split(',')[0])} · Bescherung</div>` : '',
+        ev.maxAmount ? `<div class="fact"><b>${esc(ev.maxAmount)} €</b>${t('join.budget')}</div>` : '',
+        ev.giftDate ? `<div class="fact"><b>${esc(new Date(ev.giftDate + 'T12:00').toLocaleDateString(LOCALE, { day: 'numeric', month: 'long' }))}</b>${esc(new Date(ev.giftDate + 'T12:00').toLocaleDateString(LOCALE, { weekday: 'long' }))} · ${t('join.exchange')}</div>` : '',
       ].join('');
       $('invite-text').textContent = ev.inviteText;
       renderWho(ev.participants);
@@ -88,7 +89,7 @@
     btn.disabled = true;
     try {
       const res = await api(`/api/invite/${token}/join`, { method: 'POST', body: formData(e.target) });
-      $('done-title').textContent = res.updated ? 'Wunschzettel aktualisiert!' : `Juhu, du bist dabei, ${$('name').value.trim()}!`;
+      $('done-title').textContent = res.updated ? t('join.updated') : t('join.welcome', { name: $('name').value.trim() });
       renderWho(res.participants);
       $('join').classList.add('hidden');
       $('done').classList.remove('hidden');

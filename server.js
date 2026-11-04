@@ -19,11 +19,49 @@ const baseUrl = (req) => process.env.BASE_URL || `${req.protocol}://${req.get('h
 const clean = (v, max = 2000) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
+// ---------- Sprache der Antworten (Deutsch / Englisch) ----------
+const MSG = {
+  de: {
+    nameRequired: 'Bitte gib der Aktion einen Namen.',
+    organizerEmailInvalid: 'Bitte prüfe deine E-Mail-Adresse – oder lass das Feld leer.',
+    eventNotFound: 'Diese Wichtelaktion gibt es nicht.',
+    alreadyDrawn: 'Die Ziehung hat bereits stattgefunden.',
+    tooFew: 'Für die Ziehung braucht ihr mindestens 3 Wichtel.',
+    impossible: 'Mit diesen Ausschlüssen ist keine gültige Ziehung möglich. Bitte entferne einen Ausschluss.',
+    pickTwo: 'Bitte wähle zwei verschiedene Wichtel aus.',
+    pairExists: 'Dieses Paar ist bereits ausgeschlossen.',
+    notDrawnYet: 'Es wurde noch nicht gezogen.',
+    inviteNotFound: 'Diese Einladung gibt es nicht (mehr).',
+    joinClosed: 'Schade – die Ziehung hat schon stattgefunden.',
+    nameMissing: 'Bitte gib deinen Namen an.',
+    emailInvalid: 'Bitte gib eine gültige E-Mail-Adresse an.',
+  },
+  en: {
+    nameRequired: 'Please give your Secret Santa a name.',
+    organizerEmailInvalid: 'Please check your email address – or leave the field empty.',
+    eventNotFound: "This Secret Santa doesn't exist.",
+    alreadyDrawn: 'The names have already been drawn.',
+    tooFew: 'You need at least 3 elves for the draw.',
+    impossible: 'No valid draw is possible with these exclusions. Please remove one.',
+    pickTwo: 'Please pick two different elves.',
+    pairExists: 'This pair is already excluded.',
+    notDrawnYet: "The names haven't been drawn yet.",
+    inviteNotFound: "This invitation doesn't exist (anymore).",
+    joinClosed: 'Too bad – the names have already been drawn.',
+    nameMissing: 'Please enter your name.',
+    emailInvalid: 'Please enter a valid email address.',
+  },
+};
+const langOf = (req) => (req.get('X-Lang') === 'en' ? 'en' : 'de');
+// Schlüssel → Text; unbekannte Werte (z. B. alte, schon fertige Texte) bleiben, wie sie sind
+const msg = (lang, key) => MSG[lang][key] || key;
+const fail = (req, res, status, key) => res.status(status).json({ error: msg(langOf(req), key) });
+
 // ---------- Ansichten für Oberwichtel & Eingeladene ----------
-function adminView(e) {
+function adminView(e, lang) {
   return {
     name: e.name, maxAmount: e.maxAmount, giftDate: e.giftDate, inviteText: e.inviteText,
-    drawAt: e.drawAt, drawnAt: e.drawnAt, drawError: e.drawError,
+    drawAt: e.drawAt, drawnAt: e.drawnAt, drawError: e.drawError && msg(lang, e.drawError),
     inviteToken: e.inviteToken,
     participants: e.participants.map(({ id, name, email, wishlist, joinedAt, mail }) => ({ id, name, email, wishlist, joinedAt, mail })),
     exclusions: e.exclusions,
@@ -47,10 +85,10 @@ function applyDetails(e, body) {
 
 // ---------- Ziehung ----------
 async function runDraw(e) {
-  if (e.drawnAt) throw new Error('Die Ziehung hat bereits stattgefunden.');
-  if (e.participants.length < 3) throw new Error('Für die Ziehung braucht ihr mindestens 3 Wichtel.');
+  if (e.drawnAt) throw new Error('alreadyDrawn');
+  if (e.participants.length < 3) throw new Error('tooFew');
   const result = drawAssignments(e.participants.map((p) => p.id), e.exclusions);
-  if (!result) throw new Error('Mit diesen Ausschlüssen ist keine gültige Ziehung möglich. Bitte entferne einen Ausschluss.');
+  if (!result) throw new Error('impossible');
 
   e.assignments = result;
   e.drawnAt = new Date().toISOString();
@@ -87,14 +125,15 @@ setInterval(() => {
 // ---------- API ----------
 app.post('/api/events', async (req, res) => {
   const name = clean(req.body.name, 120);
-  if (!name) return res.status(400).json({ error: 'Bitte gib der Aktion einen Namen.' });
+  if (!name) return fail(req, res, 400, 'nameRequired');
   const organizerEmail = clean(req.body.organizerEmail, 200);
   if (organizerEmail && !isEmail(organizerEmail))
-    return res.status(400).json({ error: 'Bitte prüfe deine E-Mail-Adresse – oder lass das Feld leer.' });
+    return fail(req, res, 400, 'organizerEmailInvalid');
   const e = {
     id: id(), adminToken: token(), inviteToken: token(), name,
     maxAmount: '', giftDate: '', inviteText: '', drawAt: null,
     participants: [], exclusions: [], assignments: null, drawnAt: null, drawError: null,
+    lang: langOf(req), // Sprache des Oberwichtels, z. B. für seine E-Mails
     createdAt: new Date().toISOString(),
   };
   applyDetails(e, req.body);
@@ -105,7 +144,7 @@ app.post('/api/events', async (req, res) => {
   if (organizerEmail) {
     const b = baseUrl(req);
     try {
-      await mailer.sendAdminLink(e, organizerEmail, `${b}/admin/${e.adminToken}`, `${b}/einladung/${e.inviteToken}`);
+      await mailer.sendAdminLink(e, organizerEmail, `${b}/admin/${e.adminToken}`, `${b}/einladung/${e.inviteToken}`, e.lang);
       adminMail = { status: 'sent', to: organizerEmail };
     } catch (err) {
       console.error(`[mail] Admin-Link an ${organizerEmail} fehlgeschlagen:`, err.message);
@@ -117,13 +156,13 @@ app.post('/api/events', async (req, res) => {
 
 const withAdmin = (req, res, next) => {
   req.event = store.byAdminToken(req.params.token);
-  if (!req.event) return res.status(404).json({ error: 'Diese Wichtelaktion gibt es nicht.' });
+  if (!req.event) return fail(req, res, 404, 'eventNotFound');
   next();
 };
 const notDrawn = (req, res, next) =>
-  req.event.drawnAt ? res.status(409).json({ error: 'Die Ziehung hat bereits stattgefunden.' }) : next();
+  req.event.drawnAt ? fail(req, res, 409, 'alreadyDrawn') : next();
 
-app.get('/api/admin/:token', withAdmin, (req, res) => res.json(adminView(req.event)));
+app.get('/api/admin/:token', withAdmin, (req, res) => res.json(adminView(req.event, langOf(req))));
 
 // Aktion endgültig löschen – samt Anmeldungen, Wunschzetteln und Losen
 app.delete('/api/admin/:token', withAdmin, (req, res) => {
@@ -136,7 +175,7 @@ app.put('/api/admin/:token', withAdmin, (req, res) => {
   if (req.body.drawAt !== undefined && e.drawError) e.drawError = null; // neuer Versuch
   applyDetails(e, req.body);
   store.save();
-  res.json(adminView(e));
+  res.json(adminView(e, langOf(req)));
 });
 
 app.delete('/api/admin/:token/participants/:pid', withAdmin, notDrawn, (req, res) => {
@@ -144,65 +183,66 @@ app.delete('/api/admin/:token/participants/:pid', withAdmin, notDrawn, (req, res
   e.participants = e.participants.filter((p) => p.id !== req.params.pid);
   e.exclusions = e.exclusions.filter(([a, b]) => a !== req.params.pid && b !== req.params.pid);
   store.save();
-  res.json(adminView(e));
+  res.json(adminView(e, langOf(req)));
 });
 
 app.post('/api/admin/:token/exclusions', withAdmin, notDrawn, (req, res) => {
   const e = req.event;
   const { a, b } = req.body;
   const ids = new Set(e.participants.map((p) => p.id));
-  if (!ids.has(a) || !ids.has(b) || a === b) return res.status(400).json({ error: 'Bitte wähle zwei verschiedene Wichtel aus.' });
+  if (!ids.has(a) || !ids.has(b) || a === b) return fail(req, res, 400, 'pickTwo');
   if (e.exclusions.some(([x, y]) => (x === a && y === b) || (x === b && y === a)))
-    return res.status(400).json({ error: 'Dieses Paar ist bereits ausgeschlossen.' });
+    return fail(req, res, 400, 'pairExists');
   e.exclusions.push([a, b]);
   store.save();
-  res.json(adminView(e));
+  res.json(adminView(e, langOf(req)));
 });
 
 app.delete('/api/admin/:token/exclusions/:idx', withAdmin, notDrawn, (req, res) => {
   req.event.exclusions.splice(Number(req.params.idx), 1);
   store.save();
-  res.json(adminView(req.event));
+  res.json(adminView(req.event, langOf(req)));
 });
 
 app.post('/api/admin/:token/draw', withAdmin, async (req, res) => {
   try {
     await runDraw(req.event);
-    res.json(adminView(req.event));
+    res.json(adminView(req.event, langOf(req)));
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: msg(langOf(req), err.message) });
   }
 });
 
 app.post('/api/admin/:token/resend', withAdmin, async (req, res) => {
-  if (!req.event.drawnAt) return res.status(400).json({ error: 'Es wurde noch nicht gezogen.' });
+  if (!req.event.drawnAt) return fail(req, res, 400, 'notDrawnYet');
   await sendMails(req.event, true);
-  res.json(adminView(req.event));
+  res.json(adminView(req.event, langOf(req)));
 });
 
 app.get('/api/invite/:token', (req, res) => {
   const e = store.byInviteToken(req.params.token);
-  if (!e) return res.status(404).json({ error: 'Diese Einladung gibt es nicht (mehr).' });
+  if (!e) return fail(req, res, 404, 'inviteNotFound');
   res.json(publicView(e));
 });
 
 app.post('/api/invite/:token/join', (req, res) => {
   const e = store.byInviteToken(req.params.token);
-  if (!e) return res.status(404).json({ error: 'Diese Einladung gibt es nicht (mehr).' });
-  if (e.drawnAt) return res.status(409).json({ error: 'Schade – die Ziehung hat schon stattgefunden.' });
+  if (!e) return fail(req, res, 404, 'inviteNotFound');
+  if (e.drawnAt) return fail(req, res, 409, 'joinClosed');
 
   const name = clean(req.body.name, 80);
   const email = clean(req.body.email, 200).toLowerCase();
   const wishlist = clean(req.body.wishlist, 3000);
-  if (!name) return res.status(400).json({ error: 'Bitte gib deinen Namen an.' });
-  if (!isEmail(email)) return res.status(400).json({ error: 'Bitte gib eine gültige E-Mail-Adresse an.' });
+  if (!name) return fail(req, res, 400, 'nameMissing');
+  if (!isEmail(email)) return fail(req, res, 400, 'emailInvalid');
 
   const existing = e.participants.find((p) => p.email === email);
   if (existing) {
     // gleiche E-Mail = Angaben aktualisieren (z. B. Wunschzettel ergänzen)
-    Object.assign(existing, { name, wishlist });
+    Object.assign(existing, { name, wishlist, lang: langOf(req) });
   } else {
-    e.participants.push({ id: id(), name, email, wishlist, joinedAt: new Date().toISOString() });
+    // lang: Sprache, in der die Person ihr Los per E-Mail bekommt
+    e.participants.push({ id: id(), name, email, wishlist, lang: langOf(req), joinedAt: new Date().toISOString() });
   }
   store.save();
   res.json({ ok: true, updated: !!existing, ...publicView(e) });

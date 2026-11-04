@@ -21,6 +21,9 @@ npm start          # → http://localhost:3000
 5. **🎲 Jetzt ziehen!** startet die Ziehung. Alternativ kannst du einen Zeitpunkt für eine automatische Ziehung einplanen.
 6. Ganz unten in der Zentrale kannst du die Aktion **endgültig löschen**, z. B. nach einem Testlauf oder wenn Weihnachten vorbei ist.
 
+**Sprache:** Oben rechts lässt sich jede Seite zwischen Deutsch und Englisch umschalten (beim ersten Besuch gilt die Sprache des Geräts).
+E-Mails kommen in der Sprache, in der sich die jeweilige Person angemeldet bzw. die Aktion angelegt hat.
+
 Regeln der Ziehung: Niemand zieht sich selbst, ausgeschlossene Paare ziehen sich nicht gegenseitig, und jede Person wird genau einmal gezogen.
 Man braucht mindestens 3 Teilnehmende. Wer wen gezogen hat, sieht auch der Oberwichtel nicht.
 
@@ -76,4 +79,5 @@ maßgeblich ist die `fly.toml` auf `main` (u. a. `internal_port = 3000`, passend
 | `mailer.js` | E-Mail-Vorlagen & Versand |
 | `store.js` | JSON-Speicher |
 | `public/` | Startseite, Oberwichtel-Zentrale, Einladungsseite |
+| `public/i18n.js` | Englische Texte und Sprach-Umschalter |
 | `Dockerfile`, `fly.toml` | Hosting auf Fly.io |
