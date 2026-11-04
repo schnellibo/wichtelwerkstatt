@@ -38,6 +38,14 @@ body {
 
 main { position: relative; max-width: 680px; margin: 0 auto; padding: 24px 16px 48px; }
 
+/* Sprach-Umschalter oben rechts */
+.lang-switch { position: absolute; top: 14px; right: 16px; z-index: 5; display: flex; border: 1px solid rgba(244, 239, 228, .6); border-radius: 999px; overflow: hidden; }
+.lang-switch button {
+  font: inherit; font-size: 12px; letter-spacing: .14em; color: var(--creme); background: transparent;
+  border: none; padding: 5px 11px; cursor: pointer;
+}
+.lang-switch button[aria-pressed="true"] { background: var(--creme); color: var(--oliv-dunkel); }
+
 /* Kopfbereich: große Schleife hinter Großbuchstaben + Schreibschrift */
 header.hero { position: relative; text-align: center; color: var(--creme); padding: 44px 0 34px; isolation: isolate; }
 .hero-bow {

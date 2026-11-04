@@ -23,16 +23,17 @@ const SVG_DEFS = `
 
 function decorate() {
   document.body.insertAdjacentHTML('afterbegin', SVG_DEFS);
+  addLangSwitch();
 }
 
 async function api(path, options = {}) {
   const res = await fetch(path, {
     ...options,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Lang': LANG },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Da ist etwas schiefgelaufen.');
+  if (!res.ok) throw new Error(data.error || t('error.generic'));
   return data;
 }
 
@@ -69,7 +70,7 @@ function formatDate(iso, withTime = false) {
   if (isNaN(d)) return iso;
   const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
   if (withTime) Object.assign(opts, { hour: '2-digit', minute: '2-digit' });
-  return d.toLocaleString('de-DE', opts) + (withTime ? ' Uhr' : '');
+  return d.toLocaleString(LOCALE, opts) + (withTime ? t('date.timeSuffix') : '');
 }
 
 // ISO (UTC) <-> Wert für <input type="datetime-local">

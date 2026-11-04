@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Oberwichtel-Zentrale</title>
+  <title data-i18n="title.admin">Oberwichtel-Zentrale</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
 </head>
@@ -11,92 +11,92 @@
 <main>
   <header class="hero">
     <svg class="hero-bow" aria-hidden="true"><use href="#schleife"/></svg>
-    <h1><span class="caps">Oberwichtel-<br>Zentrale</span><span class="script" id="title">…</span></h1>
-    <p class="tagline"><span id="status" class="badge open">Anmeldung offen</span></p>
+    <h1><span class="caps" data-i18n="admin.caps">Oberwichtel-<br>Zentrale</span><span class="script" id="title">…</span></h1>
+    <p class="tagline"><span id="status" class="badge open" data-i18n="admin.statusOpen">Anmeldung offen</span></p>
   </header>
 
-  <div id="notfound" class="card hidden"><h2>Hoppla!</h2><p>Diese Wichtelaktion gibt es nicht. Prüfe deinen Oberwichtel-Link.</p></div>
+  <div id="notfound" class="card hidden"><h2 data-i18n="notfound.heading">Hoppla!</h2><p data-i18n="admin.notfound">Diese Wichtelaktion gibt es nicht. Prüfe deinen Oberwichtel-Link.</p></div>
 
   <div id="app" class="hidden">
     <section class="card" id="welcome-card">
-      <h2>Deine Links</h2>
-      <div id="new-note" class="note green hidden">
+      <h2 data-i18n="admin.links">Deine Links</h2>
+      <div id="new-note" class="note green hidden" data-i18n="admin.newNote">
         🎉 Deine Aktion ist angelegt! <b>Speichere dir diese Seite als Lesezeichen</b> – nur mit diesem Link kannst du die Aktion verwalten.
       </div>
       <div id="mail-note" class="note hidden"></div>
-      <label>Einladungslink <small>– an Freunde &amp; Familie schicken</small></label>
+      <label data-i18n="admin.inviteLink">Einladungslink <small>– an Freunde &amp; Familie schicken</small></label>
       <div class="linkbox">
         <input id="invite-link" readonly>
-        <button class="btn green small" data-copy="invite-link">Kopieren</button>
+        <button class="btn green small" data-copy="invite-link" data-i18n="admin.copy">Kopieren</button>
       </div>
       <div class="actions">
         <a class="btn ghost" id="share-whatsapp" target="_blank" rel="noopener">💬 WhatsApp</a>
-        <a class="btn ghost" id="share-mail">✉️ E-Mail</a>
-        <a class="btn ghost" id="open-invite" target="_blank" rel="noopener">👀 Vorschau</a>
+        <a class="btn ghost" id="share-mail" data-i18n="admin.shareEmail">✉️ E-Mail</a>
+        <a class="btn ghost" id="open-invite" target="_blank" rel="noopener" data-i18n="admin.preview">👀 Vorschau</a>
       </div>
-      <label>Oberwichtel-Link <small>– geheim halten!</small></label>
+      <label data-i18n="admin.adminLink">Oberwichtel-Link <small>– geheim halten!</small></label>
       <div class="linkbox">
         <input id="admin-link" readonly>
-        <button class="btn ghost small" data-copy="admin-link">Kopieren</button>
+        <button class="btn ghost small" data-copy="admin-link" data-i18n="admin.copy">Kopieren</button>
       </div>
     </section>
 
     <form class="card" id="details">
-      <h2>Die Aktion</h2>
-      <label for="name">Name der Aktion</label>
+      <h2 data-i18n="admin.details">Die Aktion</h2>
+      <label for="name" data-i18n="create.name">Name der Aktion</label>
       <input id="name" name="name" required maxlength="120">
       <div class="row">
         <div>
-          <label for="maxAmount">Max. Geschenkbetrag <small>(€)</small></label>
+          <label for="maxAmount" data-i18n="create.maxAmount">Max. Geschenkbetrag <small>(€)</small></label>
           <input id="maxAmount" name="maxAmount" type="number" min="0" step="1">
         </div>
         <div>
-          <label for="giftDate">Wichtelzeitpunkt</label>
+          <label for="giftDate" data-i18n="create.giftDate">Wichtelzeitpunkt</label>
           <input id="giftDate" name="giftDate" type="date">
         </div>
       </div>
-      <label for="inviteText">Einladungstext</label>
+      <label for="inviteText" data-i18n="create.inviteText">Einladungstext</label>
       <textarea id="inviteText" name="inviteText" maxlength="3000"></textarea>
-      <div class="actions"><button class="btn green" type="submit">Speichern</button></div>
+      <div class="actions"><button class="btn green" type="submit" data-i18n="admin.save">Speichern</button></div>
     </form>
 
     <section class="card">
-      <h2>Wichtel <span class="muted" id="count"></span></h2>
-      <p id="empty" class="muted">Noch niemand angemeldet. Verschick den Einladungslink! 📨</p>
+      <h2><span data-i18n="admin.elves">Wichtel</span> <span class="muted" id="count"></span></h2>
+      <p id="empty" class="muted" data-i18n="admin.empty">Noch niemand angemeldet. Verschick den Einladungslink! 📨</p>
       <ul class="wichtel-list" id="participants"></ul>
     </section>
 
     <section class="card" id="exclusions-card">
-      <h2>Wer darf sich nicht ziehen?</h2>
-      <p class="muted">Z. B. Paare oder Geschwister. Die beiden ziehen sich dann gegenseitig nicht. (Sich selbst zieht ohnehin niemand.)</p>
+      <h2 data-i18n="admin.exclHeading">Wer darf sich nicht ziehen?</h2>
+      <p class="muted" data-i18n="admin.exclText">Z. B. Paare oder Geschwister. Die beiden ziehen sich dann gegenseitig nicht. (Sich selbst zieht ohnehin niemand.)</p>
       <form id="excl-form" class="row">
-        <div><label for="excl-a">Wichtel 1</label><select id="excl-a" name="a"></select></div>
-        <div><label for="excl-b">Wichtel 2</label><select id="excl-b" name="b"></select></div>
-        <div class="actions"><button class="btn small" type="submit">Ausschluss hinzufügen</button></div>
+        <div><label for="excl-a" data-i18n="admin.elf1">Wichtel 1</label><select id="excl-a" name="a"></select></div>
+        <div><label for="excl-b" data-i18n="admin.elf2">Wichtel 2</label><select id="excl-b" name="b"></select></div>
+        <div class="actions"><button class="btn small" type="submit" data-i18n="admin.exclAdd">Ausschluss hinzufügen</button></div>
       </form>
       <div class="chips" id="exclusions"></div>
     </section>
 
     <section class="card has-ribbon" id="draw-card">
       <svg class="ribbon" aria-hidden="true"><use href="#schleife"/></svg>
-      <h2>Die große <span class="script-accent">Ziehung</span></h2>
+      <h2 data-i18n="admin.drawHeading">Die große <span class="script-accent">Ziehung</span></h2>
 
       <div id="draw-open">
-        <p>Wenn alle dabei sind, startest du die Ziehung. Jede:r bekommt dann per E-Mail den Namen und den Wunschzettel der Person, die sie oder er beschenken darf.</p>
-        <div id="smtp-note" class="note hidden">ℹ️ Auf diesem Server ist noch kein E-Mail-Versand eingerichtet – die Mails werden im Ordner <code>outbox</code> abgelegt (siehe README).</div>
+        <p data-i18n="admin.drawText">Wenn alle dabei sind, startest du die Ziehung. Jede:r bekommt dann per E-Mail den Namen und den Wunschzettel der Person, die sie oder er beschenken darf.</p>
+        <div id="smtp-note" class="note hidden" data-i18n="admin.smtpNote">ℹ️ Auf diesem Server ist noch kein E-Mail-Versand eingerichtet – die Mails werden im Ordner <code>outbox</code> abgelegt (siehe README).</div>
         <div id="draw-error" class="note red hidden"></div>
 
         <div class="actions center">
-          <button class="btn big" id="draw-btn">Jetzt ziehen</button>
+          <button class="btn big" id="draw-btn" data-i18n="admin.drawBtn">Jetzt ziehen</button>
         </div>
 
         <details style="margin-top:22px">
-          <summary style="cursor:pointer;color:var(--rot)">…oder automatisch zu einem bestimmten Zeitpunkt ziehen</summary>
+          <summary style="cursor:pointer;color:var(--rot)" data-i18n="admin.scheduleSummary">…oder automatisch zu einem bestimmten Zeitpunkt ziehen</summary>
           <form id="schedule" class="row" style="align-items:end">
-            <div><label for="drawAt">Ziehung am</label><input id="drawAt" name="drawAt" type="datetime-local"></div>
+            <div><label for="drawAt" data-i18n="admin.drawAt">Ziehung am</label><input id="drawAt" name="drawAt" type="datetime-local"></div>
             <div class="actions">
-              <button class="btn green small" type="submit">Planen</button>
-              <button class="btn ghost small" type="button" id="unschedule">Entfernen</button>
+              <button class="btn green small" type="submit" data-i18n="admin.plan">Planen</button>
+              <button class="btn ghost small" type="button" id="unschedule" data-i18n="admin.unplan">Entfernen</button>
             </div>
           </form>
           <p id="scheduled-info" class="muted"></p>
@@ -104,28 +104,29 @@
       </div>
 
       <div id="draw-done" class="hidden center" style="text-align:center">
-        <h3>Die Lose sind gezogen!</h3>
+        <h3 data-i18n="admin.drawnHeading">Die Lose sind gezogen!</h3>
         <p id="drawn-at" class="muted"></p>
         <p id="mail-status"></p>
-        <div class="actions center"><button class="btn gold hidden" id="resend-btn">Fehlgeschlagene Mails erneut senden</button></div>
-        <p class="muted" style="font-size:16px">Wer wen gezogen hat, bleibt geheim – auch für dich. 🤫</p>
+        <div class="actions center"><button class="btn gold hidden" id="resend-btn" data-i18n="admin.resend">Fehlgeschlagene Mails erneut senden</button></div>
+        <p class="muted" style="font-size:16px" data-i18n="admin.secret">Wer wen gezogen hat, bleibt geheim – auch für dich. 🤫</p>
       </div>
     </section>
 
     <section class="card" id="delete-card">
-      <h2>Aktion löschen</h2>
-      <p class="muted center">Löscht die Aktion mit allen Anmeldungen und Wunschzetteln endgültig. Der Einladungslink und dein Oberwichtel-Link funktionieren danach nicht mehr.</p>
-      <div class="actions center"><button class="btn gold" id="delete-btn">Aktion endgültig löschen</button></div>
+      <h2 data-i18n="admin.deleteHeading">Aktion löschen</h2>
+      <p class="muted center" data-i18n="admin.deleteText">Löscht die Aktion mit allen Anmeldungen und Wunschzetteln endgültig. Der Einladungslink und dein Oberwichtel-Link funktionieren danach nicht mehr.</p>
+      <div class="actions center"><button class="btn gold" id="delete-btn" data-i18n="admin.deleteBtn">Aktion endgültig löschen</button></div>
     </section>
   </div>
 
   <section id="deleted" class="card hidden center" style="text-align:center">
-    <h2>Aktion gelöscht</h2>
-    <p>Die Wichtelaktion und alle Anmeldungen sind gelöscht.</p>
-    <div class="actions center"><a class="btn" href="/">Neue Aktion anlegen</a></div>
+    <h2 data-i18n="admin.deletedHeading">Aktion gelöscht</h2>
+    <p data-i18n="admin.deletedText">Die Wichtelaktion und alle Anmeldungen sind gelöscht.</p>
+    <div class="actions center"><a class="btn" href="/" data-i18n="footer.new">Neue Aktion anlegen</a></div>
   </section>
-  <footer><a href="/">Neue Aktion anlegen</a> · Vibe-coded by Nelli <span class="heart">♥</span></footer>
+  <footer><a href="/" data-i18n="footer.new">Neue Aktion anlegen</a> · Vibe-coded by Nelli <span class="heart">♥</span></footer>
 </main>
+<script src="/i18n.js"></script>
 <script src="/common.js"></script>
 <script>
   const token = location.pathname.split('/').pop();
@@ -136,18 +137,18 @@
   function render(data) {
     ev = data;
     const drawn = !!ev.drawnAt;
-    document.title = `${ev.name} – Oberwichtel-Zentrale`;
+    document.title = t('admin.docTitle', { name: ev.name });
     $('title').textContent = ev.name;
-    $('status').textContent = drawn ? 'Gezogen ✓' : 'Anmeldung offen';
+    $('status').textContent = drawn ? t('admin.statusDrawn') : t('admin.statusOpen');
     $('status').className = 'badge ' + (drawn ? 'done' : 'open');
 
     const inviteUrl = `${location.origin}/einladung/${ev.inviteToken}`;
     $('invite-link').value = inviteUrl;
     $('admin-link').value = location.origin + location.pathname;
     $('open-invite').href = inviteUrl;
-    const msg = `${ev.name} 🎁\nMachst du mit beim Wichteln? Hier anmelden: ${inviteUrl}`;
+    const msg = t('admin.shareMsg', { name: ev.name, url: inviteUrl });
     $('share-whatsapp').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-    $('share-mail').href = `mailto:?subject=${encodeURIComponent('Einladung: ' + ev.name)}&body=${encodeURIComponent(msg)}`;
+    $('share-mail').href = `mailto:?subject=${encodeURIComponent(t('admin.shareSubject', { name: ev.name }))}&body=${encodeURIComponent(msg)}`;
 
     const form = $('details');
     if (document.activeElement?.form !== form) {
@@ -162,11 +163,11 @@
         <div class="avatar" style="background:${avatarColor(p.name)}">${esc(p.name[0].toUpperCase())}</div>
         <div>
           <b>${esc(p.name)}</b> <span class="meta">· ${esc(p.email)}</span>
-          ${p.mail === 'sent' ? ' <span class="meta">· ✉️ Los verschickt</span>' : ''}
-          ${p.mail === 'error' ? ' <span class="meta" style="color:var(--rot)">· ⚠️ Mail fehlgeschlagen</span>' : ''}
-          ${p.wishlist ? `<details><summary>Wunschzettel ansehen</summary><div class="wish">${esc(p.wishlist)}</div></details>` : '<div class="meta">(kein Wunschzettel)</div>'}
+          ${p.mail === 'sent' ? ` <span class="meta">· ${t('admin.mailSent')}</span>` : ''}
+          ${p.mail === 'error' ? ` <span class="meta" style="color:var(--rot)">· ${t('admin.mailFailed')}</span>` : ''}
+          ${p.wishlist ? `<details><summary>${t('admin.viewWish')}</summary><div class="wish">${esc(p.wishlist)}</div></details>` : `<div class="meta">${t('admin.noWish')}</div>`}
         </div>
-        ${drawn ? '' : `<button class="btn ghost small" data-remove="${p.id}" title="Entfernen">✕</button>`}
+        ${drawn ? '' : `<button class="btn ghost small" data-remove="${p.id}" title="${t('admin.remove')}">✕</button>`}
       </li>`).join('');
 
     // Ausschlüsse
@@ -180,25 +181,25 @@
     else if (ev.participants[1]) $('excl-b').value = ev.participants[1].id;
     $('excl-form').classList.toggle('hidden', drawn || ev.participants.length < 2);
     $('exclusions').innerHTML = ev.exclusions.length
-      ? ev.exclusions.map(([a, b], i) => `<span class="chip excl">${esc(nameOf[a])} ⇹ ${esc(nameOf[b])}${drawn ? '' : ` <button data-excl="${i}" title="Entfernen">×</button>`}</span>`).join('')
-      : '<span class="muted">Keine Ausschlüsse.</span>';
+      ? ev.exclusions.map(([a, b], i) => `<span class="chip excl">${esc(nameOf[a])} ⇹ ${esc(nameOf[b])}${drawn ? '' : ` <button data-excl="${i}" title="${t('admin.remove')}">×</button>`}</span>`).join('')
+      : `<span class="muted">${t('admin.noExcl')}</span>`;
 
     // Ziehung
     $('draw-open').classList.toggle('hidden', drawn);
     $('draw-done').classList.toggle('hidden', !drawn);
     $('smtp-note').classList.toggle('hidden', ev.smtpConfigured);
     $('draw-btn').disabled = ev.participants.length < 3;
-    $('draw-btn').title = ev.participants.length < 3 ? 'Mindestens 3 Wichtel nötig' : '';
+    $('draw-btn').title = ev.participants.length < 3 ? t('admin.min3') : '';
     $('draw-error').classList.toggle('hidden', !ev.drawError);
-    $('draw-error').textContent = ev.drawError ? `⚠️ Die geplante Ziehung hat nicht geklappt: ${ev.drawError}` : '';
+    $('draw-error').textContent = ev.drawError ? t('admin.drawError', { error: ev.drawError }) : '';
     $('drawAt').value = isoToLocalInput(ev.drawAt);
-    $('scheduled-info').textContent = ev.drawAt ? `⏰ Geplant: ${formatDate(ev.drawAt, true)}` : '';
+    $('scheduled-info').textContent = ev.drawAt ? t('admin.scheduled', { date: formatDate(ev.drawAt, true) }) : '';
 
     if (drawn) {
-      $('drawn-at').textContent = `Gezogen am ${formatDate(ev.drawnAt, true)}`;
+      $('drawn-at').textContent = t('admin.drawnAt', { date: formatDate(ev.drawnAt, true) });
       const sent = ev.participants.filter((p) => p.mail === 'sent').length;
       const failed = ev.participants.filter((p) => p.mail === 'error').length;
-      $('mail-status').textContent = `✉️ ${sent} von ${ev.participants.length} Losen verschickt` + (failed ? ` · ⚠️ ${failed} fehlgeschlagen` : '');
+      $('mail-status').textContent = t('admin.mailStatus', { sent, total: ev.participants.length }) + (failed ? t('admin.mailStatusFailed', { n: failed }) : '');
       $('resend-btn').classList.toggle('hidden', !failed);
     }
   }
@@ -213,18 +214,18 @@
   // Events
   $('details').addEventListener('submit', (e) => {
     e.preventDefault();
-    act(api(base, { method: 'PUT', body: formData(e.target) }), 'Gespeichert ✓');
+    act(api(base, { method: 'PUT', body: formData(e.target) }), t('admin.saved'));
   });
   $('participants').addEventListener('click', (e) => {
     const pid = e.target.dataset.remove;
     if (!pid) return;
     const p = ev.participants.find((x) => x.id === pid);
-    if (confirm(`${p.name} wirklich von der Wichtelaktion entfernen?`))
-      act(api(`${base}/participants/${pid}`, { method: 'DELETE' }), `${p.name} wurde entfernt`);
+    if (confirm(t('admin.confirmRemove', { name: p.name })))
+      act(api(`${base}/participants/${pid}`, { method: 'DELETE' }), t('admin.removed', { name: p.name }));
   });
   $('excl-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    act(api(`${base}/exclusions`, { method: 'POST', body: formData(e.target) }), 'Ausschluss gespeichert');
+    act(api(`${base}/exclusions`, { method: 'POST', body: formData(e.target) }), t('admin.exclSaved'));
   });
   $('exclusions').addEventListener('click', (e) => {
     const i = e.target.dataset.excl;
@@ -233,34 +234,34 @@
   $('schedule').addEventListener('submit', (e) => {
     e.preventDefault();
     const v = $('drawAt').value;
-    if (!v) return toast('Bitte wähle Datum und Uhrzeit.', true);
-    if (new Date(v) < new Date()) return toast('Der Zeitpunkt liegt in der Vergangenheit.', true);
-    act(api(base, { method: 'PUT', body: { drawAt: localInputToIso(v) } }), 'Ziehung geplant ⏰');
+    if (!v) return toast(t('admin.pickTime'), true);
+    if (new Date(v) < new Date()) return toast(t('admin.pastTime'), true);
+    act(api(base, { method: 'PUT', body: { drawAt: localInputToIso(v) } }), t('admin.planned'));
   });
-  $('unschedule').addEventListener('click', () => act(api(base, { method: 'PUT', body: { drawAt: '' } }), 'Planung entfernt'));
+  $('unschedule').addEventListener('click', () => act(api(base, { method: 'PUT', body: { drawAt: '' } }), t('admin.unplanned')));
   $('draw-btn').addEventListener('click', async () => {
-    if (!confirm(`Jetzt die Lose für ${ev.participants.length} Wichtel ziehen und per E-Mail verschicken?\n\nDanach kann sich niemand mehr anmelden.`)) return;
+    if (!confirm(t('admin.confirmDraw', { n: ev.participants.length }))) return;
     $('draw-btn').disabled = true;
-    $('draw-btn').textContent = 'Wird gezogen…';
+    $('draw-btn').textContent = t('admin.drawing');
     try {
       render(await api(`${base}/draw`, { method: 'POST' }));
       confetti();
-      toast('Die Lose sind verschickt! 🎉');
+      toast(t('admin.drawn'));
     } catch (err) {
       toast(err.message, true);
       $('draw-btn').disabled = false;
     }
-    $('draw-btn').textContent = 'Jetzt ziehen';
+    $('draw-btn').textContent = t('admin.drawBtn');
   });
   $('delete-btn').addEventListener('click', async () => {
-    if (!confirm(`„${ev.name}“ wirklich endgültig löschen?\n\nAlle Anmeldungen und Wunschzettel gehen verloren. Das lässt sich nicht rückgängig machen.`)) return;
+    if (!confirm(t('admin.confirmDelete', { name: ev.name }))) return;
     $('delete-btn').disabled = true;
     try {
       await api(base, { method: 'DELETE' });
       stopRefresh();
       $('app').classList.add('hidden');
       $('deleted').classList.remove('hidden');
-      document.title = 'Aktion gelöscht';
+      document.title = t('admin.deletedTitle');
       $('status').classList.add('hidden');
       window.scrollTo(0, 0);
     } catch (err) {
@@ -268,11 +269,11 @@
       $('delete-btn').disabled = false;
     }
   });
-  $('resend-btn').addEventListener('click', () => act(api(`${base}/resend`, { method: 'POST' }), 'Erneut versucht'));
+  $('resend-btn').addEventListener('click', () => act(api(`${base}/resend`, { method: 'POST' }), t('admin.retried')));
   document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
     const input = $(b.dataset.copy);
     try { await navigator.clipboard.writeText(input.value); } catch { input.select(); document.execCommand('copy'); }
-    toast('Link kopiert 📋');
+    toast(t('admin.copied'));
   }));
 
   // Laden + alle 20 s aktualisieren, damit neue Anmeldungen auftauchen
@@ -293,8 +294,8 @@
     try { mail = JSON.parse(sessionStorage.getItem('adminMail')); sessionStorage.removeItem('adminMail'); } catch {}
     if (mail) {
       $('mail-note').innerHTML = mail.status === 'sent'
-        ? `📬 Wir haben dir den Link an <b>${esc(mail.to)}</b> geschickt. Nichts angekommen? Schau im Spam-Ordner nach.`
-        : `⚠️ Die E-Mail an <b>${esc(mail.to)}</b> konnte nicht verschickt werden (${esc(mail.error)}). Speichere dir diese Seite unbedingt als Lesezeichen.`;
+        ? t('admin.mailNoteSent', { to: esc(mail.to) })
+        : t('admin.mailNoteError', { to: esc(mail.to), error: esc(mail.error) });
       $('mail-note').classList.toggle('red', mail.status !== 'sent');
       $('mail-note').classList.remove('hidden');
     }

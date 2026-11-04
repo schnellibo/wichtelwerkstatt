@@ -23,14 +23,51 @@ const esc = (s = '') =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const nl2br = (s) => esc(s).replace(/\n/g, '<br>');
 
-function layout(title, body) {
-  return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#3b4130;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#2f3326">
+// Texte der E-Mails – die Sprache richtet sich nach der Person, die die Mail bekommt
+const T = {
+  de: {
+    closing: 'Frohes Wichteln! ❄️',
+    hello: (name) => `Hallo ${name},`,
+    drawn: 'die Wichtel-Ziehung hat stattgefunden! Du darfst beschenken:',
+    wishlistOf: (name) => `Wunschzettel von ${name}:`,
+    noWishlist: 'Kein Wunschzettel – lass dich überraschen!',
+    budget: 'Maximaler Geschenkbetrag',
+    exchange: 'Bescherung',
+    secret: 'Psst – nicht verraten! 🤫',
+    assignmentSubject: (event) => `🎁 ${event}: Dein Wichtel-Los`,
+    created: 'Deine Wichtelaktion ist angelegt! Hier sind deine Links:',
+    adminLink: '<b>Oberwichtel-Link</b> (geheim halten – damit verwaltest du die Aktion):',
+    inviteLink: '<b>Einladungslink</b> (für Freunde &amp; Familie):',
+    adminSubject: (event) => `⭐ Deine Wichtelaktion „${event}“`,
+    locale: 'de-DE',
+  },
+  en: {
+    closing: 'Happy Secret Santa! ❄️',
+    hello: (name) => `Hi ${name},`,
+    drawn: "the names have been drawn! You're buying a present for:",
+    wishlistOf: (name) => `${name}'s wish list:`,
+    noWishlist: 'No wish list – surprise them!',
+    budget: 'Gift budget',
+    exchange: 'Gift exchange',
+    secret: "Psst – don't tell! 🤫",
+    assignmentSubject: (event) => `🎁 ${event}: Your Secret Santa match`,
+    created: 'Your Secret Santa is ready! Here are your links:',
+    adminLink: '<b>Head Elf link</b> (keep it secret – use it to manage your Secret Santa):',
+    inviteLink: '<b>Invitation link</b> (for friends &amp; family):',
+    adminSubject: (event) => `⭐ Your Secret Santa “${event}”`,
+    locale: 'en-GB',
+  },
+};
+const texts = (lang) => T[lang] || T.de;
+
+function layout(title, body, lang) {
+  return `<!doctype html><html lang="${lang === 'en' ? 'en' : 'de'}"><body style="margin:0;padding:24px 12px;background:#3b4130;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;color:#2f3326">
   <div style="max-width:560px;margin:0 auto;background:#faf7f0;border-radius:18px;padding:30px 28px">
     <div style="font-size:34px;text-align:center">🎀</div>
     <p style="text-align:center;font-family:Georgia,serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#535a45;margin:6px 0 0">Wichtelwerkstatt</p>
     <h1 style="color:#a3312c;text-align:center;font-family:Georgia,serif;font-style:italic;font-weight:normal;font-size:30px;margin:6px 0 20px">${esc(title)}</h1>
     ${body}
-    <p style="text-align:center;color:#3b4130;margin-top:28px">Frohes Wichteln! ❄️</p>
+    <p style="text-align:center;color:#3b4130;margin-top:28px">${texts(lang).closing}</p>
   </div>
   <p style="text-align:center;color:#f4efe4;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:18px 0 0">Vibe-coded by Nelli <span style="color:#e58a80">♥</span></p>
 </body></html>`;
@@ -49,33 +86,36 @@ async function send({ to, subject, html }) {
 }
 
 function sendAssignment(event, giver, receiver) {
+  const lang = giver.lang || event.lang || 'de';
+  const x = texts(lang);
   const details = [
-    event.maxAmount ? `<li>Maximaler Geschenkbetrag: <b>${esc(event.maxAmount)} €</b></li>` : '',
-    event.giftDate ? `<li>Bescherung: <b>${esc(formatDate(event.giftDate))}</b></li>` : '',
+    event.maxAmount ? `<li>${x.budget}: <b>${esc(event.maxAmount)} €</b></li>` : '',
+    event.giftDate ? `<li>${x.exchange}: <b>${esc(formatDate(event.giftDate, x.locale))}</b></li>` : '',
   ].join('');
   const html = layout(event.name, `
-    <p>Hallo ${esc(giver.name)},</p>
-    <p>die Wichtel-Ziehung hat stattgefunden! Du darfst beschenken:</p>
+    <p>${x.hello(esc(giver.name))}</p>
+    <p>${x.drawn}</p>
     <div style="text-align:center;font-family:Georgia,serif;font-size:30px;color:#a3312c;background:#fffdf8;border:1px solid #ddd5c4;border-radius:12px;padding:14px;margin:16px 0">${esc(receiver.name)}</div>
-    <p><b>Wunschzettel von ${esc(receiver.name)}:</b></p>
-    <div style="background:#f4efe4;border-left:3px solid #a3312c;padding:12px 16px;border-radius:6px">${receiver.wishlist ? nl2br(receiver.wishlist) : '<i>Kein Wunschzettel – lass dich überraschen!</i>'}</div>
+    <p><b>${x.wishlistOf(esc(receiver.name))}</b></p>
+    <div style="background:#f4efe4;border-left:3px solid #a3312c;padding:12px 16px;border-radius:6px">${receiver.wishlist ? nl2br(receiver.wishlist) : `<i>${x.noWishlist}</i>`}</div>
     ${details ? `<ul>${details}</ul>` : ''}
-    <p style="font-size:14px;color:#6e705f">Psst – nicht verraten! 🤫</p>`);
-  return send({ to: giver.email, subject: `🎁 ${event.name}: Dein Wichtel-Los`, html });
+    <p style="font-size:14px;color:#6e705f">${x.secret}</p>`, lang);
+  return send({ to: giver.email, subject: x.assignmentSubject(event.name), html });
 }
 
-function sendAdminLink(event, to, adminUrl, inviteUrl) {
+function sendAdminLink(event, to, adminUrl, inviteUrl, lang = 'de') {
+  const x = texts(lang);
   const html = layout(event.name, `
-    <p>Deine Wichtelaktion ist angelegt! Hier sind deine Links:</p>
-    <p><b>Oberwichtel-Link</b> (geheim halten – damit verwaltest du die Aktion):<br><a href="${esc(adminUrl)}" style="color:#a3312c">${esc(adminUrl)}</a></p>
-    <p><b>Einladungslink</b> (für Freunde &amp; Familie):<br><a href="${esc(inviteUrl)}" style="color:#a3312c">${esc(inviteUrl)}</a></p>`);
-  return send({ to, subject: `⭐ Deine Wichtelaktion „${event.name}“`, html });
+    <p>${x.created}</p>
+    <p>${x.adminLink}<br><a href="${esc(adminUrl)}" style="color:#a3312c">${esc(adminUrl)}</a></p>
+    <p>${x.inviteLink}<br><a href="${esc(inviteUrl)}" style="color:#a3312c">${esc(inviteUrl)}</a></p>`, lang);
+  return send({ to, subject: x.adminSubject(event.name), html });
 }
 
-function formatDate(iso) {
+function formatDate(iso, locale) {
   const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso + 'T12:00' : iso);
   if (isNaN(d)) return iso;
-  return d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return d.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 module.exports = { sendAssignment, sendAdminLink, smtpConfigured: !!transport };
